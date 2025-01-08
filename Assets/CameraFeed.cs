@@ -8,6 +8,15 @@ using UnityEngine.UI;
 
 public class CameraFeed : MonoBehaviour
 {
+    WebCamTexture m_camTex;
+    RawImage m_image;
+    AspectRatioFitter m_fitter;
+
+    readonly Vector3 s_defaultScale = new Vector3(1f, 1f, 1f);
+    readonly Vector3 s_fixedScale = new Vector3(-1f, 1f, 1f);
+    readonly Rect s_defaultRect = new Rect(0f, 0f, 1f, 1f);
+    readonly Rect s_fixedRect = new Rect(0f, 1f, 1f, -1f);
+
 #if UNITY_IOS || UNITY_WEBGL
     private bool CheckPermissionAndRaiseCallbackIfGranted(UserAuthorization authenticationType, Action authenticationGrantedAction)
     {
@@ -78,11 +87,33 @@ public class CameraFeed : MonoBehaviour
         {
             Debug.Log(device.name);
         }
-        Debug.Log("Creating WebCamTexture");
-        WebCamTexture webcamTexture = new WebCamTexture();
-        Debug.Log("Getting RawImage");
-        RawImage image = GetComponent<RawImage>();
-        image.texture = webcamTexture;
-        webcamTexture.Play();
+        m_camTex = new WebCamTexture();
+        m_image = GetComponent<RawImage>();
+        m_image.texture = m_camTex;
+        m_camTex.Play();
+        m_fitter = GetComponent<AspectRatioFitter>();
+    }
+
+    private void Update()
+    {
+        if (m_camTex == null || m_camTex.width < 100)
+            return; // camera feed isn't ready yet
+
+        // Rotate image to show correct orientation 
+        Vector3 rot = new Vector3(0.0f, 0.0f, -m_camTex.videoRotationAngle);
+        m_image.rectTransform.localEulerAngles = rot;
+
+        if (m_fitter != null)
+        {
+            // Set AspectRatioFitter's ratio
+            float videoRatio =
+                (float)m_camTex.width / (float)m_camTex.height;
+            m_fitter.aspectRatio = videoRatio;
+        }
+
+        // Unflip if vertically flipped
+        m_image.uvRect =
+            m_camTex.videoVerticallyMirrored ? s_fixedRect : s_defaultRect;
+
     }
 }
