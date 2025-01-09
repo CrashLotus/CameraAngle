@@ -13,7 +13,12 @@ public class TiltLR : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float ang = Mathf.Rad2Deg * Mathf.Asin(Input.gyro.gravity.x / Input.gyro.gravity.magnitude);
-        transform.localEulerAngles = new Vector3(0.0f, 0.0f, ang);
+        Vector3 g = Input.gyro.gravity;
+        float len = g.magnitude;
+        if (len > 0.01f)
+        {
+            float ang = Mathf.Rad2Deg * Mathf.Asin(g.x / len);
+            transform.localEulerAngles = new Vector3(0.0f, 0.0f, ang);
+        }
     }
 }
