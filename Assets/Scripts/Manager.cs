@@ -8,7 +8,22 @@ public class Manager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        DialogBox.ShowDialog("This is a test", OnOk);
+    }
+
+    void OnYes()
+    {
+        Debug.Log("Yes");
+    }
+
+    void OnNo()
+    {
+        Debug.Log("No");
+    }
+
+    void OnOk()
+    {
+        Debug.Log("Ok");
     }
     
     public void OnCameraClicked()
