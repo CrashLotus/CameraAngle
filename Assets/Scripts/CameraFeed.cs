@@ -1,9 +1,9 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 #if UNITY_ANDROID
 using UnityEngine.Android;
-using UnityEngine.UI;
 #endif
 
 public class CameraFeed : MonoBehaviour
