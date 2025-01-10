@@ -163,6 +163,7 @@ PlayerSettings:
   applicationIdentifier:
     Android: com.DefaultCompany.Camera
     Standalone: com.DefaultCompany.Camera
+    iPhone: com.DefaultCompany.Camera
   buildNumber:
     Standalone: 0
     VisionOS: 0
@@ -585,8 +586,9 @@ PlayerSettings:
   enableInternalProfiler: 0
   logObjCUncaughtExceptions: 1
   enableCrashReportAPI: 0
-  cameraUsageDescription: 
-  locationUsageDescription: 
+  cameraUsageDescription: The app will need permission to access the camera
+  locationUsageDescription: Would you like to put your GPS coordinates on your images?\nThis
+    app will never upload or share your location
   microphoneUsageDescription: 
   bluetoothUsageDescription: 
   macOSTargetOSVersion: 10.13.0

@@ -17,6 +17,7 @@ public class CameraFeed : MonoBehaviour
     readonly Rect s_defaultRect = new Rect(0f, 0f, 1f, 1f);
     readonly Rect s_fixedRect = new Rect(0f, 1f, 1f, -1f);
 
+#if false
 #if UNITY_IOS || UNITY_WEBGL
     private bool CheckPermissionAndRaiseCallbackIfGranted(UserAuthorization authenticationType, Action authenticationGrantedAction)
     {
@@ -79,6 +80,7 @@ public class CameraFeed : MonoBehaviour
 #endif
         InitializeCamera();
     }
+#endif
 
     private void InitializeCamera()
     {
@@ -96,6 +98,11 @@ public class CameraFeed : MonoBehaviour
 
     private void Update()
     {
+        if (false == Manager.CheckCameraPerission())
+            return; // don't have permission
+
+        if (m_camTex == null)
+            InitializeCamera();
         if (m_camTex == null || m_camTex.width < 100)
             return; // camera feed isn't ready yet
 
