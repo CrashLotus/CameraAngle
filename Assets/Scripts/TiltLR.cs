@@ -19,6 +19,9 @@ public class TiltLR : MonoBehaviour
         {
             float ang = Mathf.Rad2Deg * Mathf.Asin(g.x / len);
             transform.localEulerAngles = new Vector3(0.0f, 0.0f, ang);
+            RectTransform rect = transform as RectTransform;
+            ang = Mathf.Rad2Deg * Mathf.Asin(g.z / len);
+            rect.anchoredPosition = new Vector2(0.0f, ang * 30.0f); 
         }
     }
 }

@@ -25,20 +25,33 @@ public class Gyro : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float dir = 0.0f;
-        switch (m_axis)
+        Vector3 g = Input.gyro.gravity;
+        float len = g.magnitude;
+        if (len > 0.01f)
         {
-            case Axis.X:
-                dir = Input.gyro.gravity.x;
-                break;
-            case Axis.Y:
-                dir = Input.gyro.gravity.y;
-                break;
-            case Axis.Z:
-                dir = Input.gyro.gravity.z;
-                break;
+            float dir = 0.0f;
+            string txt = "";
+            switch (m_axis)
+            {
+                case Axis.X:
+                    txt = "Tilt";
+                    dir = g.x;
+                    break;
+                case Axis.Y:
+                    dir = g.y;
+                    break;
+                case Axis.Z:
+                    txt = "Elv";
+                    dir = g.z;
+                    break;
+            }
+            float ang = Mathf.Rad2Deg * Mathf.Asin(dir / len);
+            m_text.gameObject.SetActive(true);
+            m_text.text = string.Format("{0}: {1:0.0}°", txt, ang);
         }
-        float ang = Mathf.Rad2Deg * Mathf.Asin(dir / Input.gyro.gravity.magnitude);
-        m_text.text = string.Format("{0:0.0}", ang);
+        else
+        {
+            m_text.gameObject.SetActive(false);
+        }
     }
 }
