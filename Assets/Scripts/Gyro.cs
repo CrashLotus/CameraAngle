@@ -46,12 +46,12 @@ public class Gyro : MonoBehaviour
                     break;
             }
             float ang = Mathf.Rad2Deg * Mathf.Asin(dir / len);
-            m_text.gameObject.SetActive(true);
+            m_text.enabled = true;
             m_text.text = string.Format("{0}: {1:0.0}°", txt, ang);
         }
         else
         {
-            m_text.gameObject.SetActive(false);
+            m_text.enabled = false;
         }
     }
 }
