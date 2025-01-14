@@ -13,7 +13,7 @@ public class GPS : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.location.status == LocationServiceStatus.Running)
+        if (PlayerPrefs.GetInt("ShowGPS", 1) > 0 && Input.location.status == LocationServiceStatus.Running)
         {
             m_lat.gameObject.SetActive(true);
             float lat = Input.location.lastData.latitude;

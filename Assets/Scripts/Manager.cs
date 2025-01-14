@@ -33,6 +33,11 @@ public class Manager : MonoBehaviour
         PickImage(256);
     }
 
+    public void OnQuitClicked()
+    {
+        Application.Quit();
+    }
+
 #if UNITY_IOS
     private bool CheckPermissionAndRaiseCallbackIfGranted(UserAuthorization authenticationType, Action authenticationGrantedAction)
     {

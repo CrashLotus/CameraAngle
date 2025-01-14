@@ -12,8 +12,18 @@ public class TimeAndDate : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        DateTime now = DateTime.Now;
-        m_date.text = now.ToShortDateString();
-        m_time.text = now.ToShortTimeString();
+        if (PlayerPrefs.GetInt("ShowDate", 1) > 0)
+        {
+            DateTime now = DateTime.Now;
+            m_date.gameObject.SetActive(true);
+            m_date.text = now.ToShortDateString();
+            m_time.gameObject.SetActive(true);
+            m_time.text = now.ToShortTimeString();
+        }
+        else
+        {
+            m_date.gameObject.SetActive(false);
+            m_time.gameObject.SetActive(false);
+        }
     }
 }
