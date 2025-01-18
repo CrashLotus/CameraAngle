@@ -34,6 +34,10 @@ public class Compass : MonoBehaviour
             if (diff < -180.0f)
                 diff += 360.0f;
             m_curAng += diff * m_rate * Time.deltaTime;
+            if (m_curAng > 180.0f)
+                m_curAng -= 360.0f;
+            if (m_curAng < -180.0f)
+                m_curAng += 360.0f;
             float scrollX = -2.0f * m_curAng;
             m_content.anchoredPosition = new Vector2(scrollX, 0);
         }
