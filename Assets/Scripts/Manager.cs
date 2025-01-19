@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using Unity.VisualScripting;
 using UnityEngine;
 #if UNITY_ANDROID
 using UnityEngine.Android;
@@ -9,6 +10,8 @@ using UnityEngine.Android;
 
 public class Manager : MonoBehaviour
 {
+    public float m_timeBetweenPhotos = 0.5f;    // wait a little between pictures
+
     enum PermissionStatus
     {
         UNKNOWN,
@@ -18,14 +21,42 @@ public class Manager : MonoBehaviour
     PermissionStatus m_hasGPS = PermissionStatus.UNKNOWN;
     PermissionStatus m_hasCamera = PermissionStatus.UNKNOWN;
 
+    bool m_cameraDelay = true;  // the user can't take photos till we're ready
+    bool m_isTakingPhoto = false;
+    AudioSource m_cameraSound;
+    List<GameObject> m_hideForPhoto = new List<GameObject>();
+
     void Start()
     {
+        m_cameraSound = GetComponent<AudioSource>();
         StartCoroutine(CheckPermissions());    
     }
 
     public void OnCameraClicked()
     {
+        if (m_cameraDelay)
+            return;
+        m_cameraDelay = true;
+        m_cameraSound.Play();
         StartCoroutine(TakeScreenShot());
+    }
+
+    public bool IsTakingPhoto()
+    {
+        return m_isTakingPhoto;
+    }
+
+    public void AddHideForPhoto(GameObject obj)
+    {
+        if (m_hideForPhoto.Contains(obj))
+            return;
+        m_hideForPhoto.Add(obj);
+    }
+
+    public void RemoveHideForPhoto(GameObject obj)
+    {
+        if (m_hideForPhoto.Contains(obj))
+            m_hideForPhoto.Remove(obj);
     }
 
     public void OnFilesClicked()
@@ -128,6 +159,8 @@ public class Manager : MonoBehaviour
                 Debug.Log("LocationServiceStatus Running");
             }
         }
+
+        m_cameraDelay = false;  // we're ready to take pictures
     }
 
     void OnCameraOk()
@@ -213,7 +246,12 @@ public class Manager : MonoBehaviour
     {
         // wait until the frame is ready
         yield return new WaitForEndOfFrame();
-        
+
+        m_isTakingPhoto = true;
+        foreach (GameObject obj in m_hideForPhoto)
+            obj.SetActive(false);
+        yield return new WaitForEndOfFrame();
+
         // grab a screenshot
         var tex = ScreenCapture.CaptureScreenshotAsTexture();
 
@@ -221,13 +259,23 @@ public class Manager : MonoBehaviour
         byte[] bytes = ImageConversion.EncodeToJPG(tex);
 
         // Save the screenshot to Gallery/Photos
-        NativeGallery.Permission permission = NativeGallery.SaveImageToGallery(bytes, "GalleryTest", "Image.jpg",
+        DateTime now = DateTime.Now;
+        string imageName = "Image" + now.ToString("yyyy-MM-dd_HH-mm-ss") + ".jpg";
+        NativeGallery.Permission permission = NativeGallery.SaveImageToGallery(bytes, "Angilator", imageName,
             (success, path) => Debug.Log("Media save result: " + success + " " + path));
 
         Debug.Log("Permission result: " + permission);
         
         // cleanup
         Destroy(tex);
+
+        m_isTakingPhoto = false;
+        foreach (GameObject obj in m_hideForPhoto)
+            obj.SetActive(true);
+
+        // wait before next photo
+        yield return new WaitForSeconds(m_timeBetweenPhotos);
+        m_cameraDelay = false;
     }
 
     private void PickImage(int maxSize)
