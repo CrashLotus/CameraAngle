@@ -94,6 +94,8 @@ public class CameraFeed : MonoBehaviour
         m_image.texture = m_camTex;
         m_camTex.Play();
         m_fitter = GetComponent<AspectRatioFitter>();
+
+        Debug.Log("InitializeCamera done");
     }
 
     private void Update()
@@ -104,23 +106,30 @@ public class CameraFeed : MonoBehaviour
         if (m_camTex == null)
             InitializeCamera();
         if (m_camTex == null || m_camTex.width < 100)
+        {
+            Debug.Log("Camera Not Ready");
             return; // camera feed isn't ready yet
+        }
 
+        Debug.Log("114");
         // Rotate image to show correct orientation 
         Vector3 rot = new Vector3(0.0f, 0.0f, -m_camTex.videoRotationAngle);
         m_image.rectTransform.localEulerAngles = rot;
 
+        Debug.Log("119");
         if (m_fitter != null)
         {
+            Debug.Log("122");
             // Set AspectRatioFitter's ratio
             float videoRatio =
                 (float)m_camTex.width / (float)m_camTex.height;
             m_fitter.aspectRatio = videoRatio;
         }
 
+        Debug.Log("129");
         // Unflip if vertically flipped
         m_image.uvRect =
             m_camTex.videoVerticallyMirrored ? s_fixedRect : s_defaultRect;
-
+        Debug.Log("133");
     }
 }

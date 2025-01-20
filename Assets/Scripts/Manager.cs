@@ -11,6 +11,20 @@ using UnityEngine.Android;
 public class Manager : MonoBehaviour
 {
     public float m_timeBetweenPhotos = 0.5f;    // wait a little between pictures
+    public GameObject m_cameraScreen;
+    public GameObject m_calibrateScreen;
+    public GameObject m_calibrateMsg01;
+    public GameObject m_calibrateMsg02;
+
+    enum CalibrationStage
+    {
+        NONE,
+        FIRST,
+        UPSIDE_DOWN,
+        SECOND,
+        DONE
+    }
+    CalibrationStage m_calibrationStage = CalibrationStage.NONE;
 
     enum PermissionStatus
     {
@@ -26,10 +40,19 @@ public class Manager : MonoBehaviour
     AudioSource m_cameraSound;
     List<GameObject> m_hideForPhoto = new List<GameObject>();
 
+    static Manager s_theManager = null;
+
     void Start()
     {
+        s_theManager = this;
         m_cameraSound = GetComponent<AudioSource>();
+        Input.gyro.enabled = true;
         StartCoroutine(CheckPermissions());    
+    }
+
+    public static Manager Get()
+    {
+        return s_theManager;
     }
 
     public void OnCameraClicked()
@@ -39,6 +62,22 @@ public class Manager : MonoBehaviour
         m_cameraDelay = true;
         m_cameraSound.Play();
         StartCoroutine(TakeScreenShot());
+    }
+
+    public void OnCalibrationClicked()
+    {
+        switch (m_calibrationStage)
+        {
+            case CalibrationStage.NONE:
+                StartCoroutine(DoCalibration());
+                break;
+            case CalibrationStage.FIRST:
+                m_calibrationStage = CalibrationStage.UPSIDE_DOWN;
+                break;
+            case CalibrationStage.SECOND:
+                m_calibrationStage = CalibrationStage.DONE;
+                break;
+        }
     }
 
     public bool IsTakingPhoto()
@@ -59,14 +98,50 @@ public class Manager : MonoBehaviour
             m_hideForPhoto.Remove(obj);
     }
 
-    public void OnFilesClicked()
-    {
-        PickImage(256);
-    }
-
     public void OnQuitClicked()
     {
+        Debug.Log("OnQuitClicked");
         Application.Quit();
+    }
+
+    public float GetTilt()
+    {
+        Vector3 g = Input.gyro.gravity;
+        float len = g.magnitude;
+        if (len > 0.01f)
+        {
+            float ang = Mathf.Rad2Deg * Mathf.Asin(g.x / len);
+            return ang;
+        }
+        return 0.0f;
+    }
+
+    float GetElevation_Raw()
+    {
+        Vector3 g = Input.gyro.gravity;
+        float len = g.magnitude;
+        if (len > 0.01f)
+        {
+            float ang = Mathf.Rad2Deg * Mathf.Asin(g.z / len);
+            return ang;
+        }
+        return 0.0f;
+    }
+
+    public float GetElevation()
+    {
+        float ang = GetElevation_Raw();
+        bool isCalibrated = PlayerPrefs.GetInt("IsCalibrated", 0) != 0;
+        if (isCalibrated)
+        {
+            float calAng = PlayerPrefs.GetFloat("ElvCalibrate", 0.0f);
+            ang -= calAng;
+            if (ang > 180.0f)
+                ang -= 360.0f;
+            if (ang < -180.0f)
+                ang += 360.0f;
+        }
+        return ang;
     }
 
 #if UNITY_IOS
@@ -145,11 +220,13 @@ public class Manager : MonoBehaviour
             float m_timeOut = 15.0f;
             while (m_timeOut > 0.0f && Input.location.status == LocationServiceStatus.Initializing)
             {
+                Debug.Log("Waiting...");
                 m_timeOut -= Time.deltaTime;
                 yield return null;
             }
             if (Input.location.status != LocationServiceStatus.Running)
             {
+                Debug.Log("There was a problem getting your GPS location");
                 DialogBox.ShowDialog("There was a problem getting your GPS location", OnGpsNo);
                 while (m_hasGPS != PermissionStatus.NO)
                     yield return null;
@@ -161,6 +238,23 @@ public class Manager : MonoBehaviour
         }
 
         m_cameraDelay = false;  // we're ready to take pictures
+
+        bool isCalibrated = PlayerPrefs.GetInt("IsCalibrated", 0) != 0;
+        if (isCalibrated)
+        {
+            Debug.Log("All Set");
+            m_cameraScreen.SetActive(true);
+            m_calibrateScreen.SetActive(false);
+        }
+        else
+        {
+            Debug.Log("Opening Calibration Dialog");
+            DialogBox.ShowDialog("Let's start by calibrating your tilt sensor",
+                null);
+            while (DialogBox.IsOpen())
+                yield return null;
+            OnCalibrationClicked();
+        }
     }
 
     void OnCameraOk()
@@ -278,13 +372,40 @@ public class Manager : MonoBehaviour
         m_cameraDelay = false;
     }
 
-    private void PickImage(int maxSize)
+    IEnumerator DoCalibration()
     {
-        NativeGallery.Permission permission = NativeGallery.GetImageFromGallery((path) =>
-        {
-            Debug.Log("PickImage: Image path: " + path);
-        });
+        m_calibrationStage = CalibrationStage.FIRST;
+        m_cameraScreen.SetActive(false);
+        m_calibrateScreen.SetActive(true);
+        m_calibrateMsg01.SetActive(true);
+        m_calibrateMsg02.SetActive(false);
+        // wait for the user to click the button
+        while (m_calibrationStage == CalibrationStage.FIRST)
+            yield return null;
 
-        Debug.Log("Permission result: " + permission);
+        float elv1 = GetElevation_Raw();
+
+        // tell user to turn phone upside down
+        m_calibrateMsg01.SetActive(false);
+        m_calibrateMsg02.SetActive(true);
+        yield return new WaitForSeconds(1.0f);
+
+        // wait for the user to click the button
+        m_calibrationStage = CalibrationStage.SECOND;
+        while (m_calibrationStage == CalibrationStage.SECOND)
+            yield return null;
+
+        // do the calibration
+        float elv2 = GetElevation_Raw();
+        float calibrate = 0.5f * (elv1 - elv2);
+        PlayerPrefs.SetFloat("ElvCalibrate", calibrate);
+
+        // finished calibration
+        DateTime now = DateTime.Now;
+        PlayerPrefs.SetInt("IsCalibrated", 1);
+        PlayerPrefs.SetString("CalibrationDate", now.ToShortDateString());
+        m_cameraScreen.SetActive(true);
+        m_calibrateScreen.SetActive(false);
+        m_calibrationStage = CalibrationStage.NONE;
     }
 }

@@ -4,24 +4,16 @@ using UnityEngine;
 
 public class TiltLR : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        Input.gyro.enabled = true;
-    }
-
     // Update is called once per frame
     void Update()
     {
-        Vector3 g = Input.gyro.gravity;
-        float len = g.magnitude;
-        if (len > 0.01f)
-        {
-            float ang = Mathf.Rad2Deg * Mathf.Asin(g.x / len);
-            transform.localEulerAngles = new Vector3(0.0f, 0.0f, ang);
-            RectTransform rect = transform as RectTransform;
-            ang = Mathf.Rad2Deg * Mathf.Asin(g.z / len);
-            rect.anchoredPosition = new Vector2(0.0f, ang * 30.0f); 
-        }
+        Debug.Log("TiltLR Update");
+        Manager manager = Manager.Get();
+        float ang = manager.GetTilt();
+        transform.localEulerAngles = new Vector3(0.0f, 0.0f, ang);
+        RectTransform rect = transform as RectTransform;
+        ang = manager.GetElevation();
+        rect.anchoredPosition = new Vector2(0.0f, ang * 30.0f);
+        Debug.Log("TiltLR Done");
     }
 }

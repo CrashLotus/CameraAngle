@@ -20,9 +20,11 @@ public class DialogBox : MonoBehaviour
     public delegate void OnDialogButton();
     OnDialogButton m_yes;
     OnDialogButton m_no;
+    static GameObject s_dialogObj = null;
 
     public static void ShowDialog(string text, OnDialogButton onYes, OnDialogButton onNo=null)
     {
+        Debug.Log("ShowDialog(\"" + text + "\"");
         GameObject obj = Resources.Load<GameObject>("DialogBox");
         if (obj == null)
         {
@@ -35,14 +37,20 @@ public class DialogBox : MonoBehaviour
             Debug.LogError("Can't find the Canvas");
             return;
         }
-        GameObject box = Instantiate(obj, canvas.transform);
-        DialogBox dialogBox = box.GetComponent<DialogBox>();
+        s_dialogObj = Instantiate(obj, canvas.transform);
+        DialogBox dialogBox = s_dialogObj.GetComponent<DialogBox>();
         if (dialogBox == null)
         {
             Debug.LogError("Can't find DialogBox component");
+            s_dialogObj = null;
             return;
         }
         dialogBox._ShowDialog(text, onYes, onNo);
+    }
+
+    public static bool IsOpen()
+    {
+        return s_dialogObj != null;
     }
 
     void _ShowDialog(string text, OnDialogButton onYes, OnDialogButton onNo)
@@ -63,6 +71,7 @@ public class DialogBox : MonoBehaviour
         Debug.Log("OnDialogYes()");
         if (null != m_yes)
             m_yes();
+        s_dialogObj = null;
         Destroy(gameObject);
     }
 
@@ -71,6 +80,7 @@ public class DialogBox : MonoBehaviour
         Debug.Log("OnDialogNo()");
         if (null != m_no)
             m_no();
+        s_dialogObj = null;
         Destroy(gameObject);
     }
 }
