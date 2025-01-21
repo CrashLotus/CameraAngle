@@ -220,7 +220,6 @@ public class Manager : MonoBehaviour
             float m_timeOut = 15.0f;
             while (m_timeOut > 0.0f && Input.location.status == LocationServiceStatus.Initializing)
             {
-                Debug.Log("Waiting...");
                 m_timeOut -= Time.deltaTime;
                 yield return null;
             }
@@ -242,13 +241,11 @@ public class Manager : MonoBehaviour
         bool isCalibrated = PlayerPrefs.GetInt("IsCalibrated", 0) != 0;
         if (isCalibrated)
         {
-            Debug.Log("All Set");
             m_cameraScreen.SetActive(true);
             m_calibrateScreen.SetActive(false);
         }
         else
         {
-            Debug.Log("Opening Calibration Dialog");
             DialogBox.ShowDialog("Let's start by calibrating your tilt sensor",
                 null);
             while (DialogBox.IsOpen())

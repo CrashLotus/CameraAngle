@@ -24,7 +24,6 @@ public class Gyro : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("Gyro Update");
         Vector3 g = Input.gyro.gravity;
         float len = g.magnitude;
         if (len > 0.01f)
@@ -49,6 +48,5 @@ public class Gyro : MonoBehaviour
         {
             m_text.enabled = false;
         }
-        Debug.Log("Gyro Done");
     }
 }
