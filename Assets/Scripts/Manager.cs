@@ -135,7 +135,10 @@ public class Manager : MonoBehaviour
         if (isCalibrated)
         {
             float calAng = PlayerPrefs.GetFloat("ElvCalibrate", 0.0f);
-            ang -= calAng;
+            if (Input.deviceOrientation == DeviceOrientation.LandscapeRight)
+                ang += calAng;
+            else if (Input.deviceOrientation == DeviceOrientation.LandscapeLeft)
+                ang -= calAng;
             if (ang > 180.0f)
                 ang -= 360.0f;
             if (ang < -180.0f)
@@ -376,6 +379,11 @@ public class Manager : MonoBehaviour
         m_calibrateScreen.SetActive(true);
         m_calibrateMsg01.SetActive(true);
         m_calibrateMsg02.SetActive(false);
+
+        // make sure the phone is upright
+        while (Input.deviceOrientation != DeviceOrientation.LandscapeLeft)
+            yield return null;
+
         // wait for the user to click the button
         while (m_calibrationStage == CalibrationStage.FIRST)
             yield return null;
@@ -385,7 +393,8 @@ public class Manager : MonoBehaviour
         // tell user to turn phone upside down
         m_calibrateMsg01.SetActive(false);
         m_calibrateMsg02.SetActive(true);
-        yield return new WaitForSeconds(1.0f);
+        while (Input.deviceOrientation != DeviceOrientation.LandscapeRight)
+            yield return null;
 
         // wait for the user to click the button
         m_calibrationStage = CalibrationStage.SECOND;
