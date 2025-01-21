@@ -13,6 +13,7 @@ public class Manager : MonoBehaviour
     public float m_timeBetweenPhotos = 0.5f;    // wait a little between pictures
     public GameObject m_cameraScreen;
     public GameObject m_calibrateScreen;
+    public GameObject m_calibrateMsg00;
     public GameObject m_calibrateMsg01;
     public GameObject m_calibrateMsg02;
 
@@ -72,9 +73,11 @@ public class Manager : MonoBehaviour
                 StartCoroutine(DoCalibration());
                 break;
             case CalibrationStage.FIRST:
+                m_cameraSound.Play();
                 m_calibrationStage = CalibrationStage.UPSIDE_DOWN;
                 break;
             case CalibrationStage.SECOND:
+                m_cameraSound.Play();
                 m_calibrationStage = CalibrationStage.DONE;
                 break;
         }
@@ -377,12 +380,15 @@ public class Manager : MonoBehaviour
         m_calibrationStage = CalibrationStage.FIRST;
         m_cameraScreen.SetActive(false);
         m_calibrateScreen.SetActive(true);
-        m_calibrateMsg01.SetActive(true);
         m_calibrateMsg02.SetActive(false);
 
         // make sure the phone is upright
+        m_calibrateMsg00.SetActive(true);
+        m_calibrateMsg01.SetActive(false);
         while (Input.deviceOrientation != DeviceOrientation.LandscapeLeft)
             yield return null;
+        m_calibrateMsg00.SetActive(false);
+        m_calibrateMsg01.SetActive(true);
 
         // wait for the user to click the button
         while (m_calibrationStage == CalibrationStage.FIRST)
