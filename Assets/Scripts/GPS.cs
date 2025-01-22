@@ -18,15 +18,15 @@ public class GPS : MonoBehaviour
             m_lat.gameObject.SetActive(true);
             float lat = Input.location.lastData.latitude;
             if (lat < 0.0f)
-                m_lat.text = string.Format("{0:0.0000}° S", -lat);
+                m_lat.text = string.Format("{0:0.0000}Â° S", -lat);
             else
-                m_lat.text = string.Format("{0:0.0000}° N", lat);
+                m_lat.text = string.Format("{0:0.0000}Â° N", lat);
             m_lng.gameObject.SetActive(true);
             float lng = Input.location.lastData.longitude;
             if (lng < 0.0f)
-                m_lng.text = string.Format("{0:0.0000}° W", -lng);
+                m_lng.text = string.Format("{0:0.0000}Â° W", -lng);
             else
-                m_lng.text = string.Format("{0:0.0000}° E", lng);
+                m_lng.text = string.Format("{0:0.0000}Â° E", lng);
             m_alt.gameObject.SetActive(true);
             m_alt.text = string.Format("Alt {0:0} m", Input.location.lastData.altitude);
         }

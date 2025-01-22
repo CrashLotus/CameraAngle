@@ -42,7 +42,7 @@ public class Gyro : MonoBehaviour
                     break;
             }
             m_text.enabled = true;
-            m_text.text = string.Format("{0}: {1:0.0}°", txt, ang);
+            m_text.text = string.Format("{0}: {1:0.0}Â°", txt, ang);
         }
         else
         {

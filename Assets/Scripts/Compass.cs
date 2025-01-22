@@ -24,7 +24,7 @@ public class Compass : MonoBehaviour
         SetVisible(PlayerPrefs.GetInt("ShowCompass", 1) > 0);
         if (m_isVisible)
         {
-            m_text.text = string.Format("{0:0.0}°", Input.compass.trueHeading);
+            m_text.text = string.Format("{0:0.0}Â°", Input.compass.trueHeading);
             float ang = Input.compass.trueHeading;
             if (ang > 180.0f)
                 ang -= 360.0f;
