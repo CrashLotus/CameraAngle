@@ -16,6 +16,7 @@ public class Manager : MonoBehaviour
     public GameObject m_calibrateMsg00;
     public GameObject m_calibrateMsg01;
     public GameObject m_calibrateMsg02;
+    public CameraFeed m_cameraFeed;
 
     enum CalibrationStage
     {
@@ -348,23 +349,46 @@ public class Manager : MonoBehaviour
         foreach (GameObject obj in m_hideForPhoto)
             obj.SetActive(false);
         yield return new WaitForEndOfFrame();
-
-        // grab a screenshot
-        var tex = ScreenCapture.CaptureScreenshotAsTexture();
-
-        // Encode the texture in JPG format
-        byte[] bytes = ImageConversion.EncodeToJPG(tex);
-
-        // Save the screenshot to Gallery/Photos
-        DateTime now = DateTime.Now;
-        string imageName = "Image" + now.ToString("yyyy-MM-dd_HH-mm-ss") + ".jpg";
-        NativeGallery.Permission permission = NativeGallery.SaveImageToGallery(bytes, "Angilator", imageName,
-            (success, path) => Debug.Log("Media save result: " + success + " " + path));
-
-        Debug.Log("Permission result: " + permission);
         
-        // cleanup
-        Destroy(tex);
+        DateTime now = DateTime.Now;
+        var camTex = m_cameraFeed.GetCamTex();
+        {   // grab a screenshot
+            int superSize = 1;
+            if (camTex != null)
+            {
+                float superSizeW = (float)camTex.width / Screen.width;
+                float superSizeH = (float)camTex.height / Screen.height;
+                superSize = (int)(Mathf.Min(superSizeW, superSizeH) + 0.5f);
+                superSize = Mathf.Max(superSize, 1);
+            }
+            var tex = ScreenCapture.CaptureScreenshotAsTexture(superSize);
+
+            // Encode the texture in JPG format
+            byte[] bytes = ImageConversion.EncodeToJPG(tex);
+
+            // Save the screenshot to Gallery/Photos
+            string imageName = "Image" + now.ToString("yyyy-MM-dd_HH-mm-ss") + ".jpg";
+            NativeGallery.Permission permission = NativeGallery.SaveImageToGallery(bytes, "Angilator", imageName,
+                (success, path) => Debug.Log("Media save result: " + success + " " + path));
+
+            // cleanup
+            Destroy(tex);
+        }
+        {   // save the raw camera feed
+            if (camTex)
+            {
+                Texture2D tex = new Texture2D(camTex.width, camTex.height);
+                tex.SetPixels(camTex.GetPixels());
+                byte[] bytes = ImageConversion.EncodeToJPG(tex);
+
+                // Save the screenshot to Gallery/Photos
+                string imageName = "Raw" + now.ToString("yyyy-MM-dd_HH-mm-ss") + ".jpg";
+                NativeGallery.Permission permission = NativeGallery.SaveImageToGallery(bytes, "Angilator", imageName,
+                    (success, path) => Debug.Log("Media save result: " + success + " " + path));
+                // cleanup
+                Destroy(tex);
+            }
+        }
 
         m_isTakingPhoto = false;
         foreach (GameObject obj in m_hideForPhoto)

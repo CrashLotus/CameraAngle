@@ -17,6 +17,13 @@ public class CameraFeed : MonoBehaviour
     readonly Rect s_defaultRect = new Rect(0f, 0f, 1f, 1f);
     readonly Rect s_fixedRect = new Rect(0f, 1f, 1f, -1f);
 
+    public WebCamTexture GetCamTex()
+    {
+        if (m_camTex && m_camTex.width > 100)
+            return m_camTex;
+        return null;
+    }
+
 #if false
 #if UNITY_IOS || UNITY_WEBGL
     private bool CheckPermissionAndRaiseCallbackIfGranted(UserAuthorization authenticationType, Action authenticationGrantedAction)
@@ -85,11 +92,34 @@ public class CameraFeed : MonoBehaviour
     private void InitializeCamera()
     {
         WebCamDevice[] devices = WebCamTexture.devices;
+        int bestWidth = -1;
+        int bestHeight = -1;
+        int bestDevice = -1;
+        int index = 0;
         foreach (WebCamDevice device in devices)
         {
             Debug.Log(device.name);
+            if (device.isFrontFacing)
+                continue;   // don't choose a front-facing camera
+            if (device.availableResolutions != null)
+            {
+                foreach (var rez in device.availableResolutions)
+                {
+                    if (rez.width > bestWidth)
+                    {   // choose the camera with the widest available resolution
+                        bestWidth = rez.width;
+                        bestHeight = rez.height;
+                        bestDevice = index;
+                    }
+                }
+            }
+            index++;
         }
-        m_camTex = new WebCamTexture();
+
+        if (bestDevice >= 0)
+            m_camTex = new WebCamTexture(devices[bestDevice].name, bestWidth, bestHeight);
+        else
+            m_camTex = new WebCamTexture();
         m_image = GetComponent<RawImage>();
         m_image.texture = m_camTex;
         m_camTex.Play();

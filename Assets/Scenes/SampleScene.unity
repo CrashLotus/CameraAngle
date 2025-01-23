@@ -5756,6 +5756,7 @@ MonoBehaviour:
   m_calibrateMsg00: {fileID: 394824105}
   m_calibrateMsg01: {fileID: 1531451336}
   m_calibrateMsg02: {fileID: 967886152}
+  m_cameraFeed: {fileID: 54642856}
 --- !u!82 &1063738910
 AudioSource:
   m_ObjectHideFlags: 0
@@ -9301,7 +9302,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: v. 250120a
+  m_text: v. 250122a
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
