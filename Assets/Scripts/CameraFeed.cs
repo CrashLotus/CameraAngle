@@ -12,8 +12,6 @@ public class CameraFeed : MonoBehaviour
     RawImage m_image;
     AspectRatioFitter m_fitter;
 
-    readonly Vector3 s_defaultScale = new Vector3(1f, 1f, 1f);
-    readonly Vector3 s_fixedScale = new Vector3(-1f, 1f, 1f);
     readonly Rect s_defaultRect = new Rect(0f, 0f, 1f, 1f);
     readonly Rect s_fixedRect = new Rect(0f, 1f, 1f, -1f);
 
