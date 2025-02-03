@@ -1,3 +1,4 @@
+using CandyCoded.HapticFeedback;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -63,6 +64,8 @@ public class Manager : MonoBehaviour
             return;
         m_cameraDelay = true;
         m_cameraSound.Play();
+        if (PlayerPrefs.GetInt("Haptics", 1) > 0)
+            HapticFeedback.HeavyFeedback();
         StartCoroutine(TakeScreenShot());
     }
 
@@ -75,10 +78,14 @@ public class Manager : MonoBehaviour
                 break;
             case CalibrationStage.FIRST:
                 m_cameraSound.Play();
+                if (PlayerPrefs.GetInt("Haptics", 1) > 0)
+                    HapticFeedback.HeavyFeedback();
                 m_calibrationStage = CalibrationStage.UPSIDE_DOWN;
                 break;
             case CalibrationStage.SECOND:
                 m_cameraSound.Play();
+                if (PlayerPrefs.GetInt("Haptics", 1) > 0)
+                    HapticFeedback.HeavyFeedback();
                 m_calibrationStage = CalibrationStage.DONE;
                 break;
         }
