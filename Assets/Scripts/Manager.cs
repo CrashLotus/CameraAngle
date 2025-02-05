@@ -62,10 +62,10 @@ public class Manager : MonoBehaviour
         if (m_cameraHold)
         {
             float tilt = GetTilt();
-            if (Mathf.Abs(tilt) < 0.1f)
+            if (Mathf.Abs(tilt) < 0.05f)
             {
                 float elv = GetElevation();
-                if (Mathf.Abs(elv) < 0.1f)
+                if (Mathf.Abs(elv) < 0.05f)
                 {
                     m_cameraHold = false;
                     OnCameraClicked();

@@ -7,6 +7,8 @@ using UnityEngine.UIElements;
 
 public class CalibrateButton : MonoBehaviour
 {
+    public TextMeshProUGUI m_dateText;
+
     // Start is called before the first frame update
     void OnEnable()
     {
@@ -16,16 +18,16 @@ public class CalibrateButton : MonoBehaviour
     public void UpdateText()
     {
         bool isCalibrated = PlayerPrefs.GetInt("IsCalibrated", 0) != 0;
-        TextMeshProUGUI text = GetComponentInChildren<TextMeshProUGUI>();
-        if (text != null)
+        if (m_dateText != null)
         {
             if (isCalibrated)
             {
-                text.text = PlayerPrefs.GetString("CalibrationDate", "Unknown");
+                float calAng = PlayerPrefs.GetFloat("ElvCalibrate", 0.0f);
+                m_dateText.text = string.Format("{0} {1:0.00}°", PlayerPrefs.GetString("CalibrationDate", "Unknown"), calAng);
             }
             else
             {
-                text.text = "Not Calibrated";
+                m_dateText.text = "Not Calibrated";
             }
         }
     }
