@@ -13,7 +13,8 @@ public class OptionToggle : MonoBehaviour
     void Start()
     {
         m_toggle = GetComponent<Toggle>();
-        m_toggle.SetIsOnWithoutNotify(PlayerPrefs.GetInt(m_option, 1) > 0);
+        int value = m_toggle.isOn ? 1 : 0;
+        m_toggle.SetIsOnWithoutNotify(PlayerPrefs.GetInt(m_option, value) > 0);
         m_toggle.onValueChanged.AddListener(delegate {
             OnValueChanged(m_toggle);
             });

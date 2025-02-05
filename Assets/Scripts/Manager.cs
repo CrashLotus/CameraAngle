@@ -40,6 +40,8 @@ public class Manager : MonoBehaviour
 
     bool m_cameraDelay = true;  // the user can't take photos till we're ready
     bool m_isTakingPhoto = false;
+    bool m_cameraHold = false;
+    bool m_waitForRelease = false;
     AudioSource m_cameraSound;
     List<GameObject> m_hideForPhoto = new List<GameObject>();
 
@@ -50,7 +52,27 @@ public class Manager : MonoBehaviour
         s_theManager = this;
         m_cameraSound = GetComponent<AudioSource>();
         Input.gyro.enabled = true;
+        // reset the LevelShot option every time you launch
+        PlayerPrefs.SetInt("LevelShot", 0);
         StartCoroutine(CheckPermissions());    
+    }
+
+    void Update()
+    {
+        if (m_cameraHold)
+        {
+            float tilt = GetTilt();
+            if (Mathf.Abs(tilt) < 0.1f)
+            {
+                float elv = GetElevation();
+                if (Mathf.Abs(elv) < 0.1f)
+                {
+                    m_cameraHold = false;
+                    OnCameraClicked();
+                    m_waitForRelease = true;
+                }
+            }
+        }
     }
 
     public static Manager Get()
@@ -60,6 +82,8 @@ public class Manager : MonoBehaviour
 
     public void OnCameraClicked()
     {
+        if (m_cameraHold || m_waitForRelease)
+            return;
         if (m_cameraDelay)
             return;
         m_cameraDelay = true;
@@ -69,8 +93,32 @@ public class Manager : MonoBehaviour
         StartCoroutine(TakeScreenShot());
     }
 
+    public void OnCameraHold()
+    {
+        Debug.Log(PlayerPrefs.GetInt("LevelShot", 0));
+        if (PlayerPrefs.GetInt("LevelShot", 0) > 0)
+        {
+            m_cameraHold = true;
+            Debug.Log("Hold");
+        }
+    }
+
+    public void OnCameraRelease()
+    {
+        StartCoroutine(DelayedCameraRelease());
+    }
+
+    IEnumerator DelayedCameraRelease()
+    {
+        yield return null;
+        m_cameraHold = false;
+        m_waitForRelease = false;
+    }
+
     public void OnCalibrationClicked()
     {
+#if !UNITY_EDITOR
+        // do not attempt to calibrate in editor
         switch (m_calibrationStage)
         {
             case CalibrationStage.NONE:
@@ -89,6 +137,7 @@ public class Manager : MonoBehaviour
                 m_calibrationStage = CalibrationStage.DONE;
                 break;
         }
+#endif
     }
 
     public bool IsTakingPhoto()
@@ -252,7 +301,11 @@ public class Manager : MonoBehaviour
 
         m_cameraDelay = false;  // we're ready to take pictures
 
+#if UNITY_EDITOR    // do not attempt to calibrate in editor
+        bool isCalibrated = true;
+#else
         bool isCalibrated = PlayerPrefs.GetInt("IsCalibrated", 0) != 0;
+#endif
         if (isCalibrated)
         {
             m_cameraScreen.SetActive(true);
