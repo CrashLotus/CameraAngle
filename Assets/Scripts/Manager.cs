@@ -40,8 +40,6 @@ public class Manager : MonoBehaviour
 
     bool m_cameraDelay = true;  // the user can't take photos till we're ready
     bool m_isTakingPhoto = false;
-    bool m_cameraHold = false;
-    bool m_waitForRelease = false;
     AudioSource m_cameraSound;
     List<GameObject> m_hideForPhoto = new List<GameObject>();
 
@@ -57,24 +55,6 @@ public class Manager : MonoBehaviour
         StartCoroutine(CheckPermissions());    
     }
 
-    void Update()
-    {
-        if (m_cameraHold)
-        {
-            float tilt = GetTilt();
-            if (Mathf.Abs(tilt) < 0.05f)
-            {
-                float elv = GetElevation();
-                if (Mathf.Abs(elv) < 0.05f)
-                {
-                    m_cameraHold = false;
-                    OnCameraClicked();
-                    m_waitForRelease = true;
-                }
-            }
-        }
-    }
-
     public static Manager Get()
     {
         return s_theManager;
@@ -82,8 +62,6 @@ public class Manager : MonoBehaviour
 
     public void OnCameraClicked()
     {
-        if (m_cameraHold || m_waitForRelease)
-            return;
         if (m_cameraDelay)
             return;
         m_cameraDelay = true;
@@ -91,28 +69,6 @@ public class Manager : MonoBehaviour
         if (PlayerPrefs.GetInt("Haptics", 1) > 0)
             HapticFeedback.HeavyFeedback();
         StartCoroutine(TakeScreenShot());
-    }
-
-    public void OnCameraHold()
-    {
-        Debug.Log(PlayerPrefs.GetInt("LevelShot", 0));
-        if (PlayerPrefs.GetInt("LevelShot", 0) > 0)
-        {
-            m_cameraHold = true;
-            Debug.Log("Hold");
-        }
-    }
-
-    public void OnCameraRelease()
-    {
-        StartCoroutine(DelayedCameraRelease());
-    }
-
-    IEnumerator DelayedCameraRelease()
-    {
-        yield return null;
-        m_cameraHold = false;
-        m_waitForRelease = false;
     }
 
     public void OnCalibrationClicked()

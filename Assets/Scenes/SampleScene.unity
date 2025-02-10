@@ -597,14 +597,6 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1063738909}
-    - target: {fileID: 4606509111295833051, guid: 0bbd37dd523e9b94c8424f8848026833, type: 3}
-      propertyPath: m_elvRatio
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 4635266867498191040, guid: 0bbd37dd523e9b94c8424f8848026833, type: 3}
-      propertyPath: m_elvRatio
-      value: 30
-      objectReference: {fileID: 0}
     - target: {fileID: 4706631804694654722, guid: 0bbd37dd523e9b94c8424f8848026833, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -689,6 +681,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1063738909}
+    - target: {fileID: 6070843431848987707, guid: 0bbd37dd523e9b94c8424f8848026833, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -100
+      objectReference: {fileID: 0}
     - target: {fileID: 6130000654786356084, guid: 0bbd37dd523e9b94c8424f8848026833, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -701,16 +697,8 @@ PrefabInstance:
       propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6357836393593061412, guid: 0bbd37dd523e9b94c8424f8848026833, type: 3}
-      propertyPath: m_text
-      value: v. 250209a
-      objectReference: {fileID: 0}
-    - target: {fileID: 6421054000037133097, guid: 0bbd37dd523e9b94c8424f8848026833, type: 3}
-      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 1063738909}
-    - target: {fileID: 6421054000037133097, guid: 0bbd37dd523e9b94c8424f8848026833, type: 3}
-      propertyPath: m_Delegates.Array.data[1].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+    - target: {fileID: 7157278801834862347, guid: 0bbd37dd523e9b94c8424f8848026833, type: 3}
+      propertyPath: m_manager
       value: 
       objectReference: {fileID: 1063738909}
     - target: {fileID: 7857264103368517810, guid: 0bbd37dd523e9b94c8424f8848026833, type: 3}
