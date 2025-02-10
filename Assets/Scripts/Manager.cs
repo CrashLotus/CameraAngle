@@ -2,8 +2,6 @@ using CandyCoded.HapticFeedback;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using Unity.VisualScripting;
 using UnityEngine;
 #if UNITY_ANDROID
 using UnityEngine.Android;
@@ -52,7 +50,7 @@ public class Manager : MonoBehaviour
         Input.gyro.enabled = true;
         // reset the LevelShot option every time you launch
         PlayerPrefs.SetInt("LevelShot", 0);
-        StartCoroutine(CheckPermissions());    
+        StartCoroutine(CheckPermissions());
     }
 
     public static Manager Get()
@@ -82,12 +80,14 @@ public class Manager : MonoBehaviour
                 break;
             case CalibrationStage.FIRST:
                 m_cameraSound.Play();
+                ScreenFlash.Get().DoFlash();
                 if (PlayerPrefs.GetInt("Haptics", 1) > 0)
                     HapticFeedback.HeavyFeedback();
                 m_calibrationStage = CalibrationStage.UPSIDE_DOWN;
                 break;
             case CalibrationStage.SECOND:
                 m_cameraSound.Play();
+                ScreenFlash.Get().DoFlash();
                 if (PlayerPrefs.GetInt("Haptics", 1) > 0)
                     HapticFeedback.HeavyFeedback();
                 m_calibrationStage = CalibrationStage.DONE;
@@ -195,7 +195,7 @@ public class Manager : MonoBehaviour
         {
             m_hasCamera = PermissionStatus.YES;
         }
-        else 
+        else
         {
             DialogBox.ShowDialog("This app requires camera access\nYour photos will not be uploaded or shared in any way",
                 OnCameraOk);
@@ -362,7 +362,7 @@ public class Manager : MonoBehaviour
         foreach (GameObject obj in m_hideForPhoto)
             obj.SetActive(false);
         yield return new WaitForEndOfFrame();
-        
+
         DateTime now = DateTime.Now;
         var camTex = m_cameraFeed.GetCamTex();
         {   // grab a screenshot
@@ -406,6 +406,9 @@ public class Manager : MonoBehaviour
         m_isTakingPhoto = false;
         foreach (GameObject obj in m_hideForPhoto)
             obj.SetActive(true);
+
+        // Do the Screen Flash
+        ScreenFlash.Get().DoFlash();
 
         // wait before next photo
         yield return new WaitForSeconds(m_timeBetweenPhotos);
