@@ -313,11 +313,8 @@ public class Manager : MonoBehaviour
         }
         else
         {
-            DialogBox.ShowDialog("Let's start by calibrating your tilt sensor",
+            DialogBox.ShowDialog("Consider calibrating your tilt sensor\nThe option can be found in the settings menu",
                 null);
-            while (DialogBox.IsOpen())
-                yield return null;
-            OnCalibrationClicked();
         }
     }
 
