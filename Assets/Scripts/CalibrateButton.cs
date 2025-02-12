@@ -23,7 +23,7 @@ public class CalibrateButton : MonoBehaviour
             if (isCalibrated)
             {
                 float calAng = PlayerPrefs.GetFloat("ElvCalibrate", 0.0f);
-                m_dateText.text = string.Format("{0} {1:0.00}°", PlayerPrefs.GetString("CalibrationDate", "Unknown"), calAng);
+                m_dateText.text = string.Format("{0} {1:0.00}Â°", PlayerPrefs.GetString("CalibrationDate", "Unknown"), calAng);
             }
             else
             {
