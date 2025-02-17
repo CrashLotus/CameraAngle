@@ -29,20 +29,17 @@ public class Gyro : MonoBehaviour
         if (len > 0.01f)
         {
             float ang = 0.0f;
-            string txt = "";
             switch (m_axis)
             {
                 case Axis.X:
-                    txt = "Tilt";
                     ang = Manager.Get().GetTilt();
                     break;
                 case Axis.Z:
-                    txt = "Elv";
                     ang = Manager.Get().GetElevation();
                     break;
             }
             m_text.enabled = true;
-            m_text.text = string.Format("{0}: {1:0.0}°", txt, ang);
+            m_text.text = string.Format("{0:0.0}°", ang);
         }
         else
         {

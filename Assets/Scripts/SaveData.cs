@@ -116,7 +116,7 @@ public class SaveData : MonoBehaviour
     {
         string filename = GetFilename();
         m_saveData.version = s_version;
-        string data = JsonUtility.ToJson(m_saveData);
+        string data = JsonUtility.ToJson(m_saveData, true);
         File.WriteAllText(filename, data);
     }
 

@@ -102,6 +102,7 @@ public class Manager : MonoBehaviour
 #endif
     }
 
+#if false   // image picker
     public void OnFileClicked()
     {
 #if false   // image picker
@@ -112,7 +113,6 @@ public class Manager : MonoBehaviour
 #endif
     }
 
-#if false   // image picker
     void ImageChosen(string file)
     {
         if (string.IsNullOrEmpty(file))
@@ -299,15 +299,30 @@ public class Manager : MonoBehaviour
         }
 
         m_cameraDelay = false;  // we're ready to take pictures
+        m_cameraScreen.SetActive(true);
 
 #if UNITY_EDITOR    // do not attempt to calibrate in editor
         bool isCalibrated = true;
 #else
         bool isCalibrated = PlayerPrefs.GetInt("IsCalibrated", 0) != 0;
+        if (false == isCalibrated)
+        {
+            int nagCountDown = PlayerPrefs.GetInt("CalibrateReminder", 0);
+            Debug.Log("Nag Count = " + nagCountDown);
+            if (nagCountDown > 0)
+            {
+                nagCountDown--;
+                PlayerPrefs.SetInt("CalibrateReminder", nagCountDown);
+                isCalibrated = true;
+            }
+            else
+            {
+                PlayerPrefs.SetInt("CalibrateReminder", 5);
+            }
+        }
 #endif
         if (isCalibrated)
         {
-            m_cameraScreen.SetActive(true);
             m_calibrateScreen.SetActive(false);
         }
         else

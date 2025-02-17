@@ -28,7 +28,7 @@ public class GPS : MonoBehaviour
             else
                 m_lng.text = string.Format("{0:0.0000}° E", lng);
             m_alt.gameObject.SetActive(true);
-            m_alt.text = string.Format("Alt {0:0} m", Input.location.lastData.altitude);
+            m_alt.text = string.Format("{0:0} m", Input.location.lastData.altitude);
         }
         else
         {

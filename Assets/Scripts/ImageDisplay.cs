@@ -7,9 +7,10 @@ using TMPro;
 
 public class ImageDisplay : MonoBehaviour
 {
+    public RawImage m_rawImage;
     public TextMeshProUGUI m_date;
+    public float m_slideTime = 0.25f;
 
-    RawImage m_rawImage;
     Texture2D m_texDisplay;
     int m_dateIndex = 0;
     int m_fileIndex = 0;
@@ -27,8 +28,6 @@ public class ImageDisplay : MonoBehaviour
 
     private void OnEnable()
     {
-        m_rawImage = GetComponent<RawImage>();
-
         if (null != m_texDisplay)
         {
             Destroy(m_texDisplay);
@@ -84,34 +83,41 @@ public class ImageDisplay : MonoBehaviour
 
     void OnSwipeLeft()
     {
-        SwipeLeftRight(-1);
+        if (SwipeLeftRight(-1))
+            StartCoroutine(SlideScreen(new Vector3(-1.0f, 0.0f, 0.0f)));
     }
 
     void OnSwipeRight()
     {
-        SwipeLeftRight(1);
+        if (SwipeLeftRight(1))
+            StartCoroutine(SlideScreen(new Vector3(1.0f, 0.0f, 0.0f)));
     }
 
     void OnSwipeUp()
     {
-        SwipeUpDown(-1);
+        if (SwipeUpDown(-1))
+            StartCoroutine(SlideScreen(new Vector3(0.0f, 1.0f, 0.0f)));
     }
 
     void OnSwipeDown()
     {
-        SwipeUpDown(1);
+        if (SwipeUpDown(1))
+            StartCoroutine(SlideScreen(new Vector3(0.0f, -1.0f, 0.0f)));
     }
 
-    void SwipeLeftRight(int dir)
+    bool SwipeLeftRight(int dir)
     {
         int oldIndex = m_fileIndex;
         m_fileIndex += dir;
         m_fileIndex = Mathf.Clamp(m_fileIndex, 0, m_files.Count - 1);
         if (oldIndex != m_fileIndex)
-            LoadImage();
+        {
+            return true;
+        }
+        return false;
     }
 
-    void SwipeUpDown(int dir)
+    bool SwipeUpDown(int dir)
     {
         int oldIndex = m_dateIndex;
         m_dateIndex += dir;
@@ -119,7 +125,45 @@ public class ImageDisplay : MonoBehaviour
         if (oldIndex != m_dateIndex)
         {
             m_fileIndex = -1;
-            LoadImage();
+            return true;
         }
+        return false;
+    }
+
+    IEnumerator SlideScreen(Vector3 dir)
+    {
+        Vector3 startPos = new Vector3(
+            0.5f * Screen.width,
+            0.5f * Screen.height,
+            0.0f
+            );
+        Vector3 endPos = startPos;
+        endPos += Vector3.Scale(dir, new Vector3(Screen.width, Screen.height, 0.0f));
+
+        float timer = 0.0f;
+        while (timer < m_slideTime)
+        {
+            float lerp = timer / m_slideTime;
+            m_rawImage.transform.position = Vector3.Lerp(startPos, endPos, lerp);
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        LoadImage();
+        endPos = startPos;
+        startPos -= Vector3.Scale(dir, new Vector3(Screen.width, Screen.height, 0.0f));
+        
+        timer = 0.0f;
+        while (timer < m_slideTime)
+        {
+            float lerp = timer / m_slideTime;
+            m_rawImage.transform.position = Vector3.Lerp(startPos, endPos, lerp);
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        m_rawImage.transform.position = endPos;
     }
 }

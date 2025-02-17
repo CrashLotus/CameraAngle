@@ -472,7 +472,7 @@ MonoBehaviour:
   m_calibrateMsg01: {fileID: 1531451336}
   m_calibrateMsg02: {fileID: 967886152}
   m_cameraFeed: {fileID: 54642856}
-  m_imageDisplay: {fileID: 1936459211}
+  m_imageDisplay: {fileID: 0}
 --- !u!82 &1063738910
 AudioSource:
   m_ObjectHideFlags: 0
@@ -574,17 +574,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 465418350205394153, guid: 0bbd37dd523e9b94c8424f8848026833, type: 3}
   m_PrefabInstance: {fileID: 7410004078827931993}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1936459211 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6104508019811728305, guid: 0bbd37dd523e9b94c8424f8848026833, type: 3}
-  m_PrefabInstance: {fileID: 7410004078827931993}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &7410004078827931993
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -609,10 +598,6 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1063738909}
-    - target: {fileID: 4481813835776431740, guid: 0bbd37dd523e9b94c8424f8848026833, type: 3}
-      propertyPath: m_AdditionalShaderChannelsFlag
-      value: 25
-      objectReference: {fileID: 0}
     - target: {fileID: 4706631804694654722, guid: 0bbd37dd523e9b94c8424f8848026833, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -693,10 +678,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5472424535684953280, guid: 0bbd37dd523e9b94c8424f8848026833, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 1063738909}
     - target: {fileID: 5886975015036786940, guid: 0bbd37dd523e9b94c8424f8848026833, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
