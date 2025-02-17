@@ -33,6 +33,13 @@ public class PinchZoom : MonoBehaviour
                     Vector3 pos = startPos;
                     pos.x += delta.x;
                     pos.y += delta.y;
+                    float xCenter = 0.5f * Screen.width;
+                    float xLimit = (transform.localScale.x - 1.0f) * xCenter;
+                    pos.x = Mathf.Clamp(pos.x, xCenter - xLimit, xCenter + xLimit);
+                    float yCenter = 0.5f * Screen.height;
+                    float yLimit = (transform.localScale.x - 1.0f) * yCenter;
+                    pos.y = Mathf.Clamp(pos.y, yCenter - yLimit, yCenter + yLimit);
+                    Debug.Log(pos);
                     transform.position = pos;
                 }
                 yield return null;
@@ -52,6 +59,15 @@ public class PinchZoom : MonoBehaviour
                     float ratio = origScale * newDist / dist;
                     ratio = Mathf.Clamp(ratio, 1.0f, m_maxZoom);
                     transform.localScale = new Vector3(ratio, ratio, ratio);
+                    Vector3 pos = transform.position;
+                    float xCenter = 0.5f * Screen.width;
+                    float xLimit = (transform.localScale.x - 1.0f) * xCenter;
+                    pos.x = Mathf.Clamp(pos.x, xCenter - xLimit, xCenter + xLimit);
+                    float yCenter = 0.5f * Screen.height;
+                    float yLimit = (transform.localScale.x - 1.0f) * yCenter;
+                    pos.y = Mathf.Clamp(pos.y, yCenter - yLimit, yCenter + yLimit);
+                    Debug.Log(pos);
+                    transform.position = pos;
                     yield return null;
                 }
             }

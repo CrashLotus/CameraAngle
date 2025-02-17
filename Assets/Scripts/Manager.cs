@@ -122,7 +122,7 @@ public class Manager : MonoBehaviour
             return;
         }
         m_imageDisplay.texture = m_texDisplay;
-        m_imageDisplay.gameObject.SetActive(true);
+        m_imageDisplay.transform.parent.gameObject.SetActive(true);
     }
 
     public bool IsTakingPhoto()
