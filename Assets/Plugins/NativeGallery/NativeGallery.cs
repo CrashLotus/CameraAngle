@@ -470,9 +470,8 @@ public static class NativeGallery
 			string path = GetTemporarySavePath( filename );
 #if UNITY_EDITOR
 			Debug.Log( "SaveToGallery called successfully in the Editor" );
-#else
-			File.WriteAllBytes( path, mediaBytes );
 #endif
+			File.WriteAllBytes( path, mediaBytes );
 
 			SaveToGalleryInternal( path, album, mediaType, callback );
 		}
@@ -545,7 +544,7 @@ public static class NativeGallery
 			_NativeGallery_VideoWriteToAlbum( path, album, PermissionFreeMode ? 1 : 0 );
 #else
 		if( callback != null )
-			callback( true, null );
+			callback( true, path );
 #endif
 	}
 

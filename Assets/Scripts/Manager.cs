@@ -104,13 +104,25 @@ public class Manager : MonoBehaviour
 
     public void OnFileClicked()
     {
+#if false   // image picker
         NativeGallery.Permission ret = NativeGallery.GetImageFromGallery(ImageChosen, "Image*", "image/jpeg");
         Debug.Log("OnFileClicked(): " + ret.ToString());
+#else
+        m_imageDisplay.gameObject.SetActive(true);
+#endif
     }
 
+#if false   // image picker
     void ImageChosen(string file)
     {
+        if (string.IsNullOrEmpty(file))
+        {
+            Debug.Log("ImageChosen() no file selected");
+            return;
+        }
+
         Debug.Log("ImageChosen(\"" + file + "\"");
+
         if (null != m_texDisplay)
         {
             Destroy(m_texDisplay);
@@ -123,8 +135,9 @@ public class Manager : MonoBehaviour
             return;
         }
         m_imageDisplay.texture = m_texDisplay;
-        m_imageDisplay.transform.parent.gameObject.SetActive(true);
+        m_imageDisplay.gameObject.SetActive(true);
     }
+#endif
 
     public bool IsTakingPhoto()
     {
@@ -411,7 +424,7 @@ public class Manager : MonoBehaviour
 
             // Save the screenshot to Gallery/Photos
             string dateName = now.ToString("yyyy-MM-dd");
-            string imageName = "Image" + now.ToString("yyyy-MM-dd_HH-mm-ss") + ".jpg";
+            string imageName = now.ToString("yyyy-MM-dd_HH-mm-ss") + "_Image.jpg";
             NativeGallery.Permission permission = NativeGallery.SaveImageToGallery(bytes, "Angilator", imageName,
                 (success, path) => {
                     Debug.Log("Media save result: " + success + " " + path);
@@ -431,7 +444,7 @@ public class Manager : MonoBehaviour
                 byte[] bytes = ImageConversion.EncodeToJPG(tex);
 
                 // Save the screenshot to Gallery/Photos
-                string imageName = "Raw" + now.ToString("yyyy-MM-dd_HH-mm-ss") + ".jpg";
+                string imageName = now.ToString("yyyy-MM-dd_HH-mm-ss") + "_Raw.jpg";
                 NativeGallery.Permission permission = NativeGallery.SaveImageToGallery(bytes, "Angilator", imageName,
                     (success, path) => Debug.Log("Media save result: " + success + " " + path));
 

@@ -39,6 +39,9 @@ public class SaveData : MonoBehaviour
 
     public void AddImage(string date, string filePath)
     {
+        if (string.IsNullOrEmpty(filePath))
+            return;
+
 //        Debug.Log("AddImage(\"" + date + "\", \"" + filePath + "\"");
         // look for the date
         bool foundIt = false;
@@ -59,6 +62,30 @@ public class SaveData : MonoBehaviour
             m_saveData.dateBlocks.Add(dateBlock);
         }
         Save();
+    }
+
+    public List<string> GetDates()
+    {
+        List<string> dates = new List<string>();
+        foreach (DateBlock dateBlock in m_saveData.dateBlocks)
+        {
+            dates.Add(dateBlock.date);
+        }
+        return dates;
+    }
+
+    public List<string> GetFiles(string date)
+    {
+        List<string> files = new List<string>();
+        foreach (DateBlock dateBlock in m_saveData.dateBlocks)
+        {
+            if (dateBlock.date == date)
+            {
+                files = dateBlock.files;
+                break;
+            }
+        }
+        return files;
     }
 
     static string GetFilename()
