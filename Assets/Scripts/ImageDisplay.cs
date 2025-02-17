@@ -11,6 +11,19 @@ public class ImageDisplay : MonoBehaviour
 
     RawImage m_rawImage;
     Texture2D m_texDisplay;
+    int m_dateIndex = 0;
+    int m_fileIndex = 0;
+    List<string> m_dates;
+    List<string> m_files;
+
+    private void Awake()
+    {
+        Swiper swiper = GetComponent<Swiper>();
+        swiper.SwipeUpEvent += OnSwipeUp;
+        swiper.SwipeDownEvent += OnSwipeDown;
+        swiper.SwipeLeftEvent += OnSwipeLeft;
+        swiper.SwipeRightEvent += OnSwipeRight;
+    }
 
     private void OnEnable()
     {
@@ -22,16 +35,32 @@ public class ImageDisplay : MonoBehaviour
             m_texDisplay = null;
         }
 
+        m_dateIndex = -1;
+        m_fileIndex = -1;
+        LoadImage();
+    }
+
+    void LoadImage()
+    { 
         // get the most recent file
         SaveData save = SaveData.Get();
-        List<string> dates = save.GetDates();
-        if (null != dates && dates.Count > 0)
+        m_dates = save.GetDates();
+        if (null != m_dates && m_dates.Count > 0)
         {
-            string date = dates[dates.Count - 1];
-            List<string> files = save.GetFiles(date);
-            if (null != files && files.Count > 0)
+            if (m_dateIndex < 0 || m_dateIndex >= m_dates.Count)
             {
-                string file = files[files.Count - 1];
+                m_dateIndex = m_dates.Count - 1;
+                m_fileIndex = -1;
+            }
+            string date = m_dates[m_dateIndex];
+            m_files = save.GetFiles(date);
+            if (null != m_files && m_files.Count > 0)
+            {
+                if (m_fileIndex < 0 || m_fileIndex >= m_files.Count)
+                {
+                    m_fileIndex = m_files.Count - 1;
+                }
+                string file = m_files[m_fileIndex];
                 m_texDisplay = NativeGallery.LoadImageAtPath(file);
                 if (null == m_texDisplay)
                 {
@@ -47,9 +76,50 @@ public class ImageDisplay : MonoBehaviour
         }
     }
 
-    private void OnDisable()
+    void OnDisable()
     {
         Destroy(m_texDisplay);
         m_texDisplay = null;
+    }
+
+    void OnSwipeLeft()
+    {
+        SwipeLeftRight(-1);
+    }
+
+    void OnSwipeRight()
+    {
+        SwipeLeftRight(1);
+    }
+
+    void OnSwipeUp()
+    {
+        SwipeUpDown(-1);
+    }
+
+    void OnSwipeDown()
+    {
+        SwipeUpDown(1);
+    }
+
+    void SwipeLeftRight(int dir)
+    {
+        int oldIndex = m_fileIndex;
+        m_fileIndex += dir;
+        m_fileIndex = Mathf.Clamp(m_fileIndex, 0, m_files.Count - 1);
+        if (oldIndex != m_fileIndex)
+            LoadImage();
+    }
+
+    void SwipeUpDown(int dir)
+    {
+        int oldIndex = m_dateIndex;
+        m_dateIndex += dir;
+        m_dateIndex = Mathf.Clamp(m_dateIndex, 0, m_dates.Count - 1);
+        if (oldIndex != m_dateIndex)
+        {
+            m_fileIndex = -1;
+            LoadImage();
+        }
     }
 }
