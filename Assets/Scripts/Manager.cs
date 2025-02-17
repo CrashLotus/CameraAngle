@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using UnityEngine;
 #if UNITY_ANDROID
 using UnityEngine.Android;
+using UnityEngine.UI;
+//using static NativeGallery;
 #endif
 
 public class Manager : MonoBehaviour
@@ -16,6 +18,9 @@ public class Manager : MonoBehaviour
     public GameObject m_calibrateMsg01;
     public GameObject m_calibrateMsg02;
     public CameraFeed m_cameraFeed;
+    public RawImage m_imageDisplay;
+
+    Texture2D m_texDisplay;
 
     enum CalibrationStage
     {
@@ -94,6 +99,30 @@ public class Manager : MonoBehaviour
                 break;
         }
 #endif
+    }
+
+    public void OnFileClicked()
+    {
+        NativeGallery.Permission ret = NativeGallery.GetImageFromGallery(ImageChosen, "Image*", "image/jpeg");
+        Debug.Log("OnFileClicked(): " + ret.ToString());
+    }
+
+    void ImageChosen(string file)
+    {
+        Debug.Log("ImageChosen(\"" + file + "\"");
+        if (null != m_texDisplay)
+        {
+            Destroy(m_texDisplay);
+            m_texDisplay = null;
+        }
+        m_texDisplay = NativeGallery.LoadImageAtPath(file);
+        if (null == m_texDisplay)
+        {
+            Debug.LogError("Unable to load file " + file);
+            return;
+        }
+        m_imageDisplay.texture = m_texDisplay;
+        m_imageDisplay.gameObject.SetActive(true);
     }
 
     public bool IsTakingPhoto()
