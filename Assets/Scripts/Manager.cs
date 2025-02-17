@@ -55,6 +55,7 @@ public class Manager : MonoBehaviour
         Input.gyro.enabled = true;
         // reset the LevelShot option every time you launch
         PlayerPrefs.SetInt("LevelShot", 0);
+        SaveData.Get(); // warm up the save system
         StartCoroutine(CheckPermissions());
     }
 
@@ -409,9 +410,15 @@ public class Manager : MonoBehaviour
             byte[] bytes = ImageConversion.EncodeToJPG(tex);
 
             // Save the screenshot to Gallery/Photos
+            string dateName = now.ToString("yyyy-MM-dd");
             string imageName = "Image" + now.ToString("yyyy-MM-dd_HH-mm-ss") + ".jpg";
             NativeGallery.Permission permission = NativeGallery.SaveImageToGallery(bytes, "Angilator", imageName,
-                (success, path) => Debug.Log("Media save result: " + success + " " + path));
+                (success, path) => {
+                    Debug.Log("Media save result: " + success + " " + path);
+                    if (success)
+                        // Record this in our save data
+                        SaveData.Get().AddImage(dateName, path);
+                });
 
             // cleanup
             Destroy(tex);
@@ -427,6 +434,7 @@ public class Manager : MonoBehaviour
                 string imageName = "Raw" + now.ToString("yyyy-MM-dd_HH-mm-ss") + ".jpg";
                 NativeGallery.Permission permission = NativeGallery.SaveImageToGallery(bytes, "Angilator", imageName,
                     (success, path) => Debug.Log("Media save result: " + success + " " + path));
+
                 // cleanup
                 Destroy(tex);
             }
