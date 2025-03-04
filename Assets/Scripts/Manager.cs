@@ -3,10 +3,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 #if UNITY_ANDROID
 using UnityEngine.Android;
-using UnityEngine.UI;
-//using static NativeGallery;
 #endif
 
 public class Manager : MonoBehaviour
@@ -18,9 +17,6 @@ public class Manager : MonoBehaviour
     public GameObject m_calibrateMsg01;
     public GameObject m_calibrateMsg02;
     public CameraFeed m_cameraFeed;
-    public RawImage m_imageDisplay;
-
-    Texture2D m_texDisplay;
 
     enum CalibrationStage
     {

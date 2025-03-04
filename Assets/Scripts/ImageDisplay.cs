@@ -107,6 +107,10 @@ public class ImageDisplay : MonoBehaviour
 
     bool SwipeLeftRight(int dir)
     {
+        if (null == m_files || m_files.Count < 1)
+        {
+            return false;
+        }
         int oldIndex = m_fileIndex;
         m_fileIndex += dir;
         m_fileIndex = Mathf.Clamp(m_fileIndex, 0, m_files.Count - 1);
@@ -119,6 +123,10 @@ public class ImageDisplay : MonoBehaviour
 
     bool SwipeUpDown(int dir)
     {
+        if (null == m_dates || m_dates.Count < 1)
+        {
+            return false;
+        }
         int oldIndex = m_dateIndex;
         m_dateIndex += dir;
         m_dateIndex = Mathf.Clamp(m_dateIndex, 0, m_dates.Count - 1);

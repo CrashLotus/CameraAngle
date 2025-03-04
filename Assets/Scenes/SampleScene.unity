@@ -472,7 +472,6 @@ MonoBehaviour:
   m_calibrateMsg01: {fileID: 1531451336}
   m_calibrateMsg02: {fileID: 967886152}
   m_cameraFeed: {fileID: 54642856}
-  m_imageDisplay: {fileID: 0}
 --- !u!82 &1063738910
 AudioSource:
   m_ObjectHideFlags: 0
@@ -691,7 +690,19 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6130000654786356084, guid: 0bbd37dd523e9b94c8424f8848026833, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6186215178802334734, guid: 0bbd37dd523e9b94c8424f8848026833, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6186215178802334734, guid: 0bbd37dd523e9b94c8424f8848026833, type: 3}
       propertyPath: m_SizeDelta.x
+      value: -212
+      objectReference: {fileID: 0}
+    - target: {fileID: 6186215178802334734, guid: 0bbd37dd523e9b94c8424f8848026833, type: 3}
+      propertyPath: m_AnchoredPosition.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7157278801834862347, guid: 0bbd37dd523e9b94c8424f8848026833, type: 3}
