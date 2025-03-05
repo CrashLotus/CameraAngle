@@ -1,3 +1,4 @@
+#if false
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -175,3 +176,4 @@ public class ImageDisplay : MonoBehaviour
         m_rawImage.transform.position = endPos;
     }
 }
+#endif

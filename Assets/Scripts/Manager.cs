@@ -51,7 +51,6 @@ public class Manager : MonoBehaviour
         Input.gyro.enabled = true;
         // reset the LevelShot option every time you launch
         PlayerPrefs.SetInt("LevelShot", 0);
-        SaveData.Get(); // warm up the save system
         StartCoroutine(CheckPermissions());
     }
 
@@ -439,9 +438,6 @@ public class Manager : MonoBehaviour
             NativeGallery.Permission permission = NativeGallery.SaveImageToGallery(bytes, "Angilator", imageName,
                 (success, path) => {
                     Debug.Log("Media save result: " + success + " " + path);
-                    if (success)
-                        // Record this in our save data
-                        SaveData.Get().AddImage(dateName, path);
                 });
 
             // cleanup
