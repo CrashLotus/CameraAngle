@@ -1,22 +1,19 @@
-#if false
 using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
 
 public class ImageDisplay : MonoBehaviour
 {
-    public RawImage m_rawImage;
-    public TextMeshProUGUI m_date;
+    public GameObject m_screenShot;
+    public GameObject m_fullImage;
     public float m_slideTime = 0.25f;
 
-    Texture2D m_texDisplay;
-    int m_dateIndex = 0;
-    int m_fileIndex = 0;
-    List<string> m_dates;
-    List<string> m_files;
+    enum State
+    {
+        SCREENSHOT,
+        FULL
+    }
+    State m_state = State.SCREENSHOT;
+    bool m_isSliding = false;
 
     private void Awake()
     {
@@ -29,151 +26,74 @@ public class ImageDisplay : MonoBehaviour
 
     private void OnEnable()
     {
-        if (null != m_texDisplay)
-        {
-            Destroy(m_texDisplay);
-            m_texDisplay = null;
-        }
-
-        m_dateIndex = -1;
-        m_fileIndex = -1;
-        LoadImage();
+        SetState(State.FULL);
     }
 
-    void LoadImage()
-    { 
-        // get the most recent file
-        SaveData save = SaveData.Get();
-        m_dates = save.GetDates();
-        if (null != m_dates && m_dates.Count > 0)
-        {
-            if (m_dateIndex < 0 || m_dateIndex >= m_dates.Count)
-            {
-                m_dateIndex = m_dates.Count - 1;
-                m_fileIndex = -1;
-            }
-            string date = m_dates[m_dateIndex];
-            m_files = save.GetFiles(date);
-            if (null != m_files && m_files.Count > 0)
-            {
-                if (m_fileIndex < 0 || m_fileIndex >= m_files.Count)
-                {
-                    m_fileIndex = m_files.Count - 1;
-                }
-                string file = m_files[m_fileIndex];
-                m_texDisplay = NativeGallery.LoadImageAtPath(file);
-                if (null == m_texDisplay)
-                {
-                    Debug.LogError("Unable to load file " + file);
-                    return;
-                }
-                m_rawImage.texture = m_texDisplay;
-                if (null != m_date)
-                {
-                    m_date.text = Path.GetFileName(file);
-                }
-            }
-        }
-    }
-
-    void OnDisable()
+    void SetState(State newState)
     {
-        Destroy(m_texDisplay);
-        m_texDisplay = null;
+        if (newState != m_state)
+        {
+            switch (newState)
+            {
+                case State.SCREENSHOT:
+                    m_screenShot.SetActive(true);
+                    m_fullImage.SetActive(false);
+                    break;
+                case State.FULL:
+                    m_screenShot.SetActive(false);
+                    m_fullImage.SetActive(true);
+                    break;
+            }
+            m_state = newState;
+        }
     }
 
     void OnSwipeLeft()
     {
-        if (SwipeLeftRight(-1))
-            StartCoroutine(SlideScreen(new Vector3(-1.0f, 0.0f, 0.0f)));
+        if (m_isSliding)
+            return;
+        if (m_state == State.SCREENSHOT)
+            SetState(State.FULL);
+        else
+            SetState(State.SCREENSHOT);
+        StartCoroutine(Slide(1.0f));
     }
 
     void OnSwipeRight()
     {
-        if (SwipeLeftRight(1))
-            StartCoroutine(SlideScreen(new Vector3(1.0f, 0.0f, 0.0f)));
+        if (m_isSliding)
+            return;
+        if (m_state == State.SCREENSHOT)
+            SetState(State.FULL);
+        else
+            SetState(State.SCREENSHOT);
+        StartCoroutine(Slide(-1.0f));
     }
 
     void OnSwipeUp()
     {
-        if (SwipeUpDown(-1))
-            StartCoroutine(SlideScreen(new Vector3(0.0f, 1.0f, 0.0f)));
+        gameObject.SetActive(false);
     }
 
     void OnSwipeDown()
     {
-        if (SwipeUpDown(1))
-            StartCoroutine(SlideScreen(new Vector3(0.0f, -1.0f, 0.0f)));
+        gameObject.SetActive(false);
     }
 
-    bool SwipeLeftRight(int dir)
+    IEnumerator Slide(float dir)
     {
-        if (null == m_files || m_files.Count < 1)
+        m_isSliding = true;
+        Vector3 end = new Vector3(0.5f * Screen.width, 0.5f * Screen.height, 0.0f);
+        Vector3 start = end + dir * new Vector3(Screen.width, 0.0f, 0.0f);
+        GameObject obj = m_state == State.SCREENSHOT ? m_screenShot : m_fullImage;
+        float m_time = m_slideTime;
+        while (m_time > 0.0f)
         {
-            return false;
-        }
-        int oldIndex = m_fileIndex;
-        m_fileIndex += dir;
-        m_fileIndex = Mathf.Clamp(m_fileIndex, 0, m_files.Count - 1);
-        if (oldIndex != m_fileIndex)
-        {
-            return true;
-        }
-        return false;
-    }
-
-    bool SwipeUpDown(int dir)
-    {
-        if (null == m_dates || m_dates.Count < 1)
-        {
-            return false;
-        }
-        int oldIndex = m_dateIndex;
-        m_dateIndex += dir;
-        m_dateIndex = Mathf.Clamp(m_dateIndex, 0, m_dates.Count - 1);
-        if (oldIndex != m_dateIndex)
-        {
-            m_fileIndex = -1;
-            return true;
-        }
-        return false;
-    }
-
-    IEnumerator SlideScreen(Vector3 dir)
-    {
-        Vector3 startPos = new Vector3(
-            0.5f * Screen.width,
-            0.5f * Screen.height,
-            0.0f
-            );
-        Vector3 endPos = startPos;
-        endPos += Vector3.Scale(dir, new Vector3(Screen.width, Screen.height, 0.0f));
-
-        float timer = 0.0f;
-        while (timer < m_slideTime)
-        {
-            float lerp = timer / m_slideTime;
-            m_rawImage.transform.position = Vector3.Lerp(startPos, endPos, lerp);
-
-            timer += Time.deltaTime;
+            m_time -= Time.deltaTime;
+            float lerp = Mathf.Clamp01(m_time / m_slideTime);
+            obj.transform.position = Vector3.Lerp(end, start, lerp);
             yield return null;
         }
-
-        LoadImage();
-        endPos = startPos;
-        startPos -= Vector3.Scale(dir, new Vector3(Screen.width, Screen.height, 0.0f));
-        
-        timer = 0.0f;
-        while (timer < m_slideTime)
-        {
-            float lerp = timer / m_slideTime;
-            m_rawImage.transform.position = Vector3.Lerp(startPos, endPos, lerp);
-
-            timer += Time.deltaTime;
-            yield return null;
-        }
-
-        m_rawImage.transform.position = endPos;
+        m_isSliding = false;
     }
 }
-#endif

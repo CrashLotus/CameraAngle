@@ -17,6 +17,9 @@ public class Manager : MonoBehaviour
     public GameObject m_calibrateMsg01;
     public GameObject m_calibrateMsg02;
     public CameraFeed m_cameraFeed;
+    public GameObject m_photoDisplay;
+    public RawImage m_screenShotImage;
+    public RawImage m_fullCameraImage;
 
     enum CalibrationStage
     {
@@ -41,6 +44,8 @@ public class Manager : MonoBehaviour
     bool m_isTakingPhoto = false;
     AudioSource m_cameraSound;
     List<GameObject> m_hideForPhoto = new List<GameObject>();
+    Texture2D m_screenTex;
+    Texture2D m_fullTex;
 
     static Manager s_theManager = null;
 
@@ -427,36 +432,39 @@ public class Manager : MonoBehaviour
                 superSize = (int)(Mathf.Min(superSizeW, superSizeH) + 0.5f);
                 superSize = Mathf.Max(superSize, 1);
             }
-            var tex = ScreenCapture.CaptureScreenshotAsTexture(superSize);
+            if (null != m_screenTex)
+                Destroy(m_screenTex);
+            m_screenTex = ScreenCapture.CaptureScreenshotAsTexture(superSize);
+            if (null != m_screenShotImage)
+                m_screenShotImage.texture = m_screenTex;
 
             // Encode the texture in JPG format
-            byte[] bytes = ImageConversion.EncodeToJPG(tex);
+            byte[] bytes = ImageConversion.EncodeToJPG(m_screenTex);
 
             // Save the screenshot to Gallery/Photos
             string dateName = now.ToString("yyyy-MM-dd");
             string imageName = now.ToString("yyyy-MM-dd_HH-mm-ss") + "_Image.jpg";
             NativeGallery.Permission permission = NativeGallery.SaveImageToGallery(bytes, "Angilator", imageName,
-                (success, path) => {
+                (success, path) =>
+                {
                     Debug.Log("Media save result: " + success + " " + path);
                 });
-
-            // cleanup
-            Destroy(tex);
         }
         {   // save the raw camera feed
             if (camTex)
             {
-                Texture2D tex = new Texture2D(camTex.width, camTex.height);
-                tex.SetPixels(camTex.GetPixels());
-                byte[] bytes = ImageConversion.EncodeToJPG(tex);
+                if (null != m_fullTex)
+                    Destroy(m_fullTex);
+                m_fullTex = new Texture2D(camTex.width, camTex.height);
+                m_fullTex.SetPixels(camTex.GetPixels());
+                if (null != m_fullCameraImage)
+                    m_fullCameraImage.texture = m_fullTex;
+                byte[] bytes = ImageConversion.EncodeToJPG(m_fullTex);
 
                 // Save the screenshot to Gallery/Photos
                 string imageName = now.ToString("yyyy-MM-dd_HH-mm-ss") + "_Raw.jpg";
                 NativeGallery.Permission permission = NativeGallery.SaveImageToGallery(bytes, "Angilator", imageName,
                     (success, path) => Debug.Log("Media save result: " + success + " " + path));
-
-                // cleanup
-                Destroy(tex);
             }
         }
 
@@ -466,6 +474,10 @@ public class Manager : MonoBehaviour
 
         // Do the Screen Flash
         ScreenFlash.Get().DoFlash();
+
+        // pop up the image display
+        if (null != m_photoDisplay)
+            m_photoDisplay.SetActive(true);
 
         // wait before next photo
         yield return new WaitForSeconds(m_timeBetweenPhotos);
