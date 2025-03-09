@@ -434,7 +434,11 @@ public class Manager : MonoBehaviour
             }
             if (null != m_screenTex)
                 Destroy(m_screenTex);
-            m_screenTex = ScreenCapture.CaptureScreenshotAsTexture(superSize);
+            Texture2D screenTex = ScreenCapture.CaptureScreenshotAsTexture(superSize);
+            m_screenTex = new Texture2D(screenTex.width, screenTex.height, TextureFormat.RGB24, false);
+            m_screenTex.SetPixels(screenTex.GetPixels());
+            m_screenTex.Apply();
+            Destroy(screenTex);
             if (null != m_screenShotImage)
                 m_screenShotImage.texture = m_screenTex;
 
@@ -457,6 +461,17 @@ public class Manager : MonoBehaviour
                     Destroy(m_fullTex);
                 m_fullTex = new Texture2D(camTex.width, camTex.height);
                 m_fullTex.SetPixels(camTex.GetPixels());
+                m_fullTex.Apply();
+
+                AspectRatioFitter fitter = m_fullCameraImage.GetComponent<AspectRatioFitter>();
+                if (fitter != null)
+                {
+                    // Set AspectRatioFitter's ratio
+                    float videoRatio =
+                        (float)camTex.width / (float)camTex.height;
+                    fitter.aspectRatio = videoRatio;
+                }
+
                 if (null != m_fullCameraImage)
                     m_fullCameraImage.texture = m_fullTex;
                 byte[] bytes = ImageConversion.EncodeToJPG(m_fullTex);
