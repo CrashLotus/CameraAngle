@@ -17,6 +17,7 @@ public class ScreenFlash : MonoBehaviour
     {
         m_image = GetComponent<Image>();
         m_color = m_image.color;
+        m_image.enabled = false;
         s_theFlash = this;
     }
 
@@ -35,6 +36,7 @@ public class ScreenFlash : MonoBehaviour
 
     IEnumerator FlashCo()
     {
+        m_image.enabled = true;
         Color color = m_color;
         float countDown = m_flashTime;
         while (countDown > 0.0f)
@@ -47,6 +49,7 @@ public class ScreenFlash : MonoBehaviour
         }
         color.a = 0.0f;
         m_image.color = color;
+        m_image.enabled = false;
         m_isFlashing = false;
     }
 }

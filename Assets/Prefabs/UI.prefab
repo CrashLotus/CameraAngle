@@ -1489,7 +1489,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -8072,9 +8072,9 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6130000654786356084}
-  - {fileID: 6025577610297065562}
   - {fileID: 539387645447490137}
   - {fileID: 5302775231476202787}
+  - {fileID: 6025577610297065562}
   - {fileID: 2933700278200833702}
   - {fileID: 4196114451692615666}
   m_Father: {fileID: 0}
@@ -10234,7 +10234,7 @@ PrefabInstance:
       objectReference: {fileID: 334300444570453038, guid: 36d1e553c89a2654ba6ac1d29f4c2aba, type: 2}
     - target: {fileID: 8276514579960958347, guid: dfa7e7479b1e990429fff0f99b3cf36e, type: 3}
       propertyPath: m_text
-      value: v. 250217a
+      value: v. 250309a
       objectReference: {fileID: 0}
     - target: {fileID: 8276514579960958347, guid: dfa7e7479b1e990429fff0f99b3cf36e, type: 3}
       propertyPath: m_fontAsset

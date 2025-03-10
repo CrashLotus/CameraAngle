@@ -26,74 +26,134 @@ public class ImageDisplay : MonoBehaviour
 
     private void OnEnable()
     {
-        SetState(State.FULL);
-    }
-
-    void SetState(State newState)
-    {
-        if (newState != m_state)
-        {
-            switch (newState)
-            {
-                case State.SCREENSHOT:
-                    m_screenShot.SetActive(true);
-                    m_fullImage.SetActive(false);
-                    break;
-                case State.FULL:
-                    m_screenShot.SetActive(false);
-                    m_fullImage.SetActive(true);
-                    break;
-            }
-            m_state = newState;
-        }
+        m_isSliding = false;
+        m_state = State.FULL;
+        m_screenShot.SetActive(true);
+        m_fullImage.SetActive(true);
     }
 
     void OnSwipeLeft()
     {
         if (m_isSliding)
             return;
+        GameObject oldImage;
+        GameObject newImage;
         if (m_state == State.SCREENSHOT)
-            SetState(State.FULL);
+        {
+            oldImage = m_screenShot;
+            newImage = m_fullImage;
+            m_state = State.FULL;
+        }
         else
-            SetState(State.SCREENSHOT);
-        StartCoroutine(Slide(1.0f));
+        {
+            oldImage = m_fullImage;
+            newImage = m_screenShot;
+            m_state = State.SCREENSHOT;
+        }
+        StartCoroutine(SlideLeftRight(1.0f, oldImage, newImage));
     }
 
     void OnSwipeRight()
     {
         if (m_isSliding)
             return;
+        GameObject oldImage;
+        GameObject newImage;
         if (m_state == State.SCREENSHOT)
-            SetState(State.FULL);
+        {
+            oldImage = m_screenShot;
+            newImage = m_fullImage;
+            m_state = State.FULL;
+        }
         else
-            SetState(State.SCREENSHOT);
-        StartCoroutine(Slide(-1.0f));
+        {
+            oldImage = m_fullImage;
+            newImage = m_screenShot;
+            m_state = State.SCREENSHOT;
+        }
+        StartCoroutine(SlideLeftRight(-1.0f, oldImage, newImage));
     }
 
     void OnSwipeUp()
     {
-        gameObject.SetActive(false);
+        if (m_isSliding)
+            return;
+        GameObject oldImage;
+        GameObject newImage;
+        if (m_state == State.SCREENSHOT)
+        {
+            oldImage = m_screenShot;
+            newImage = m_fullImage;
+            m_state = State.FULL;
+        }
+        else
+        {
+            oldImage = m_fullImage;
+            newImage = m_screenShot;
+            m_state = State.SCREENSHOT;
+        }
+        newImage.SetActive(false);
+        StartCoroutine(SlideUpDown(-1.0f, oldImage));
     }
 
     void OnSwipeDown()
     {
-        gameObject.SetActive(false);
+        if (m_isSliding)
+            return;
+        GameObject oldImage;
+        GameObject newImage;
+        if (m_state == State.SCREENSHOT)
+        {
+            oldImage = m_screenShot;
+            newImage = m_fullImage;
+            m_state = State.FULL;
+        }
+        else
+        {
+            oldImage = m_fullImage;
+            newImage = m_screenShot;
+            m_state = State.SCREENSHOT;
+        }
+        newImage.SetActive(false);
+        StartCoroutine(SlideUpDown(1.0f, oldImage));
+
     }
 
-    IEnumerator Slide(float dir)
+    IEnumerator SlideLeftRight(float dir, GameObject oldImage, GameObject newImage)
     {
         m_isSliding = true;
-        Vector3 end = new Vector3(0.5f * Screen.width, 0.5f * Screen.height, 0.0f);
-        Vector3 start = end + dir * new Vector3(Screen.width, 0.0f, 0.0f);
-        GameObject obj = m_state == State.SCREENSHOT ? m_screenShot : m_fullImage;
+        oldImage.SetActive(true);
+        newImage.SetActive(true);
+        Vector3 mid = new Vector3(0.5f * Screen.width, 0.5f * Screen.height, 0.0f);
+        Vector3 from = mid + dir * new Vector3(Screen.width, 0.0f, 0.0f);
+        Vector3 to = mid - dir * new Vector3(Screen.width, 0.0f, 0.0f);
         float m_time = m_slideTime;
         while (m_time > 0.0f)
         {
             m_time -= Time.deltaTime;
             float lerp = Mathf.Clamp01(m_time / m_slideTime);
-            obj.transform.position = Vector3.Lerp(end, start, lerp);
+            oldImage.transform.position = Vector3.Lerp(to, mid, lerp);
+            newImage.transform.position = Vector3.Lerp(mid, from, lerp);
             yield return null;
         }
         m_isSliding = false;
+    }
+
+    IEnumerator SlideUpDown(float dir, GameObject oldImage)
+    {
+        m_isSliding = true;
+        oldImage.SetActive(true);
+        Vector3 mid = new Vector3(0.5f * Screen.width, 0.5f * Screen.height, 0.0f);
+        Vector3 to = mid - dir * new Vector3(0.0f, Screen.height, 0.0f);
+        float m_time = m_slideTime;
+        while (m_time > 0.0f)
+        {
+            m_time -= Time.deltaTime;
+            float lerp = Mathf.Clamp01(m_time / m_slideTime);
+            oldImage.transform.position = Vector3.Lerp(to, mid, lerp);
+            yield return null;
+        }
+        m_isSliding = false;
+        gameObject.SetActive(false);
     }
 }
