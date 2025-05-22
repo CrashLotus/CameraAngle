@@ -29,11 +29,20 @@ public class CameraLevel : MonoBehaviour
             float tilt = manager.GetTilt();
             if (Mathf.Abs(tilt) < 0.05f)
             {
-                float elv = manager.GetElevation();
-                if (Mathf.Abs(elv) < 0.05f)
+                int mode = PlayerPrefs.GetInt("AutoLock", 0);
+                if (mode == 0)
                 {
                     manager.OnCameraClicked();
                     Select(false);
+                }
+                else
+                {
+                    float elv = manager.GetElevation();
+                    if (Mathf.Abs(elv) < 0.05f)
+                    {
+                        manager.OnCameraClicked();
+                        Select(false);
+                    }
                 }
             }
         }        

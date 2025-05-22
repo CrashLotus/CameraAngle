@@ -121,12 +121,16 @@ public class ImageDisplay : MonoBehaviour
 
     IEnumerator SlideLeftRight(float dir, GameObject oldImage, GameObject newImage)
     {
+        float width = Display.main.systemWidth;
+        float height = Display.main.systemHeight;
+        Debug.Log("width = " + width + " height = " + height);
+        Debug.Log("Screen.width = " + Screen.width + " Screen.height = " + Screen.height);
         m_isSliding = true;
         oldImage.SetActive(true);
         newImage.SetActive(true);
-        Vector3 mid = new Vector3(0.5f * Screen.width, 0.5f * Screen.height, 0.0f);
-        Vector3 from = mid + dir * new Vector3(Screen.width, 0.0f, 0.0f);
-        Vector3 to = mid - dir * new Vector3(Screen.width, 0.0f, 0.0f);
+        Vector3 mid = new Vector3(0.5f * width, 0.5f * height, 0.0f);
+        Vector3 from = mid + dir * new Vector3(width, 0.0f, 0.0f);
+        Vector3 to = mid - dir * new Vector3(width, 0.0f, 0.0f);
         float m_time = m_slideTime;
         while (m_time > 0.0f)
         {
