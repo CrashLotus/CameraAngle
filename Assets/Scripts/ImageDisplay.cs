@@ -121,10 +121,8 @@ public class ImageDisplay : MonoBehaviour
 
     IEnumerator SlideLeftRight(float dir, GameObject oldImage, GameObject newImage)
     {
-        float width = Display.main.systemWidth;
-        float height = Display.main.systemHeight;
-        Debug.Log("width = " + width + " height = " + height);
-        Debug.Log("Screen.width = " + Screen.width + " Screen.height = " + Screen.height);
+        float width = Screen.width;
+        float height = Screen.height;
         m_isSliding = true;
         oldImage.SetActive(true);
         newImage.SetActive(true);
@@ -140,6 +138,7 @@ public class ImageDisplay : MonoBehaviour
             newImage.transform.position = Vector3.Lerp(mid, from, lerp);
             yield return null;
         }
+        oldImage.SetActive(false);
         m_isSliding = false;
     }
 
