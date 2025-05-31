@@ -490,13 +490,29 @@ public class Manager : MonoBehaviour
         // Do the Screen Flash
         ScreenFlash.Get().DoFlash();
 
-        // pop up the image display
-        if (null != m_photoDisplay)
-            m_photoDisplay.SetActive(true);
+        if (PlayerPrefs.GetInt("ShowImage", 0) == 1)
+        {   // pop up the image display
+            ShowImage();
+        }
 
         // wait before next photo
         yield return new WaitForSeconds(m_timeBetweenPhotos);
         m_cameraDelay = false;
+    }
+
+    public bool HasImage()
+    {
+        return (m_fullTex != null) && (m_fullTex.width > 1);
+    }
+
+    public bool ShowImage()
+    {
+        if (null != m_photoDisplay && HasImage())
+        {
+            m_photoDisplay.SetActive(true);
+            return true;
+        }
+        return false;
     }
 
     IEnumerator DoCalibration()
