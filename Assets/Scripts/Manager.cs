@@ -4,6 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+
 #if UNITY_ANDROID
 using UnityEngine.Android;
 #endif
@@ -20,6 +22,7 @@ public class Manager : MonoBehaviour
     public GameObject m_photoDisplay;
     public RawImage m_screenShotImage;
     public RawImage m_fullCameraImage;
+    public Material[] m_fontMaterials;
 
     enum CalibrationStage
     {
@@ -46,6 +49,7 @@ public class Manager : MonoBehaviour
     List<GameObject> m_hideForPhoto = new List<GameObject>();
     Texture2D m_screenTex;
     Texture2D m_fullTex;
+    int m_outlineOn = -1;
 
     static Manager s_theManager = null;
 
@@ -57,6 +61,33 @@ public class Manager : MonoBehaviour
         // reset the LevelShot option every time you launch
         PlayerPrefs.SetInt("LevelShot", 0);
         StartCoroutine(CheckPermissions());
+    }
+
+    private void Update()
+    {
+        int outline = PlayerPrefs.GetInt("Outline", 0);
+        if (outline != m_outlineOn)
+        {
+            m_outlineOn = outline;
+            Color color = new Color(0.0f, 0.0f, 0.0f, m_outlineOn);
+            foreach (Material mat in m_fontMaterials)
+            {
+                mat.SetColor("_UnderlayColor", color);
+            }
+            if (m_cameraScreen.activeSelf)
+            {   // this little hack updates the text on the compass
+                m_cameraScreen.SetActive(false);
+                m_cameraScreen.SetActive(true);
+            }
+            Outline[] outlines = FindObjectsOfType<Outline>(true);
+            foreach (Outline outlineObj in outlines)
+            {
+                if (outlineObj != null)
+                {
+                    outlineObj.enabled = (m_outlineOn > 0);
+                }
+            }
+        }    
     }
 
     public static Manager Get()

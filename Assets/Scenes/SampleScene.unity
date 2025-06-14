@@ -480,6 +480,9 @@ MonoBehaviour:
   m_photoDisplay: {fileID: 701927148}
   m_screenShotImage: {fileID: 1249050465}
   m_fullCameraImage: {fileID: 1392454373}
+  m_fontMaterials:
+  - {fileID: 4111016961408753980, guid: 0e4e021f69756ae4eb43f52c4cda6d80, type: 2}
+  - {fileID: 334300444570453038, guid: 36d1e553c89a2654ba6ac1d29f4c2aba, type: 2}
 --- !u!82 &1063738910
 AudioSource:
   m_ObjectHideFlags: 0
@@ -615,6 +618,14 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1063738909}
+    - target: {fileID: 460780437591301336, guid: 0bbd37dd523e9b94c8424f8848026833, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: 7d48c5e017160d941b0275550e687c85, type: 2}
+    - target: {fileID: 1555119471653586373, guid: 0bbd37dd523e9b94c8424f8848026833, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: 7d48c5e017160d941b0275550e687c85, type: 2}
     - target: {fileID: 2496244714010876556, guid: 0bbd37dd523e9b94c8424f8848026833, type: 3}
       propertyPath: m_manager
       value: 
