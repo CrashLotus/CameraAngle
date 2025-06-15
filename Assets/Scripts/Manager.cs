@@ -87,6 +87,14 @@ public class Manager : MonoBehaviour
                     outlineObj.enabled = (m_outlineOn > 0);
                 }
             }
+            Shadow[] shadows = FindObjectsOfType<Shadow>(true);
+            foreach (Shadow shadowObj in shadows)
+            {
+                if (shadowObj != null)
+                {
+                    shadowObj.enabled = (m_outlineOn > 0);
+                }
+            }
         }    
     }
 
