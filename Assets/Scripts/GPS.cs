@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using TMPro;
-using System.Runtime.CompilerServices;
+using UnityEngine;
 
 public class GPS : MonoBehaviour
 {
@@ -28,7 +25,16 @@ public class GPS : MonoBehaviour
             else
                 m_lng.text = string.Format("{0:0.0000}° E", lng);
             m_alt.gameObject.SetActive(true);
-            m_alt.text = string.Format("{0:0} m", Input.location.lastData.altitude);
+            bool inFeet = PlayerPrefs.GetInt("AltInFeet", 0) > 0;
+            if (inFeet)
+            {
+                float feet = Input.location.lastData.altitude * 3.28084f;
+                m_alt.text = string.Format("{0:0} ft", feet);
+            }
+            else
+            {
+                m_alt.text = string.Format("{0:0} m", Input.location.lastData.altitude);
+            }
         }
         else
         {
