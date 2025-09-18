@@ -4,7 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 #if UNITY_ANDROID
 using UnityEngine.Android;
@@ -79,7 +78,7 @@ public class Manager : MonoBehaviour
                 m_cameraScreen.SetActive(false);
                 m_cameraScreen.SetActive(true);
             }
-            Outline[] outlines = FindObjectsOfType<Outline>(true);
+            Outline[] outlines = FindObjectsByType<Outline>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             foreach (Outline outlineObj in outlines)
             {
                 if (outlineObj != null)
@@ -87,7 +86,7 @@ public class Manager : MonoBehaviour
                     outlineObj.enabled = (m_outlineOn > 0);
                 }
             }
-            Shadow[] shadows = FindObjectsOfType<Shadow>(true);
+            Shadow[] shadows = FindObjectsByType<Shadow>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             foreach (Shadow shadowObj in shadows)
             {
                 if (shadowObj != null)
@@ -95,7 +94,7 @@ public class Manager : MonoBehaviour
                     shadowObj.enabled = (m_outlineOn > 0);
                 }
             }
-        }    
+        }
     }
 
     public static Manager Get()
@@ -290,10 +289,18 @@ public class Manager : MonoBehaviour
         Debug.Log("Android GPS permissions");
         if (!Permission.HasUserAuthorizedPermission(Permission.FineLocation))
         {
-            DialogBox.ShowDialog("Would you like to put your GPS coordinates on your images?\nThis app will never upload or share your location",
-                OnGpsYes, OnGpsNo);
-            while (m_hasGPS == PermissionStatus.UNKNOWN)
-                yield return null;
+            //if (Permission.ShouldShowRequestPermissionRationale(Permission.FineLocation))
+            if (true)
+            {
+                DialogBox.ShowDialog("Would you like to put your GPS coordinates on your images?\nThis app will never upload or share your location",
+                    OnGpsYes, OnGpsNo);
+                while (m_hasGPS == PermissionStatus.UNKNOWN)
+                    yield return null;
+            }
+            else
+            {
+                m_hasGPS = PermissionStatus.NO;
+            }
         }
 #endif
 
@@ -421,7 +428,6 @@ public class Manager : MonoBehaviour
         var callbacks = new PermissionCallbacks();
         callbacks.PermissionDenied += GPSPermissionDenied;
         callbacks.PermissionGranted += GPSPermissionGranted;
-        callbacks.PermissionDeniedAndDontAskAgain += GPSPermissionDeniedAndDontAskAgain;
         Permission.RequestUserPermission(Permission.FineLocation, callbacks);
     }
 
@@ -435,12 +441,6 @@ public class Manager : MonoBehaviour
     {
         Debug.Log("GPSPermissionGranted");
         m_hasGPS = PermissionStatus.YES;
-    }
-
-    void GPSPermissionDeniedAndDontAskAgain(string permission)
-    {   // mrwTODO don't ask again!
-        Debug.Log("GPSPermissionDeniedAndDontAskAgain");
-        m_hasGPS = PermissionStatus.NO;
     }
 #endif
 

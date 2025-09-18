@@ -5,8 +5,6 @@
 //  Thanks - whitingm@usc.edu
 //----------------------------------------------------------------------------------------
 
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -22,7 +20,7 @@ public class DialogBox : MonoBehaviour
     OnDialogButton m_no;
     static GameObject s_dialogObj = null;
 
-    public static void ShowDialog(string text, OnDialogButton onYes, OnDialogButton onNo=null)
+    public static void ShowDialog(string text, OnDialogButton onYes, OnDialogButton onNo = null)
     {
         Debug.Log("ShowDialog(\"" + text + "\"");
         GameObject obj = Resources.Load<GameObject>("DialogBox");
@@ -31,7 +29,7 @@ public class DialogBox : MonoBehaviour
             Debug.LogError("Unable to load Dialog Box");
             return;
         }
-        Canvas canvas = FindObjectOfType<Canvas>();
+        Canvas canvas = FindFirstObjectByType<Canvas>();
         if (canvas == null)
         {
             Debug.LogError("Can't find the Canvas");
